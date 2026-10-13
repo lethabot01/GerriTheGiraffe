@@ -14,6 +14,7 @@
       master = ctx.createGain(); master.gain.value = state.volume; master.connect(ctx.destination);
       musicBus = ctx.createGain(); musicBus.gain.value = 0.55; musicBus.connect(master);
       sfxBus = ctx.createGain(); sfxBus.gain.value = 0.7; sfxBus.connect(master);
+      if (!state.music) { musicBus.gain.value = 0; sfxBus.gain.value = 0; }
     }
     if (ctx.state === 'suspended') ctx.resume();
     return ctx;
@@ -217,16 +218,38 @@
     });
   }
 
+  /* ---------- Recorded tracks (the theme song) ---------- */
+  let track = null;
+  function playTrack(url) {
+    stopTrack();
+    track = new Audio(url);
+    track.volume = state.music ? state.volume : 0;
+    const p = track.play();
+    if (p && p.catch) p.catch(() => { /* blocked or failed: karaoke falls back to the engine clock */ });
+    return track;
+  }
+  function stopTrack() {
+    if (!track) return;
+    track.pause(); track.removeAttribute('src'); track.load(); track = null;
+  }
+
   function stopSpeech() { if ('speechSynthesis' in window) speechSynthesis.cancel(); }
 
   window.Sound = {
-    state, ensure, sfx, planSong, playSong, stopSong, speak, stopSpeech, estimate,
+    state, ensure, sfx, planSong, playSong, stopSong, speak, stopSpeech, estimate, syllables, playTrack, stopTrack,
     pauseSpeech() { if ('speechSynthesis' in window) speechSynthesis.pause(); },
     resumeSpeech() { if ('speechSynthesis' in window) speechSynthesis.resume(); },
     now: () => (ctx ? ctx.currentTime : performance.now() / 1000),
     hasAudio: () => !!ctx && state.music,
-    setVolume(v) { state.volume = v; if (master) master.gain.value = v; },
-    suspend() { if (ctx && ctx.state === 'running') ctx.suspend(); },
-    resume() { if (ctx && ctx.state === 'suspended') ctx.resume(); },
+    setVolume(v) { state.volume = v; if (master) master.gain.value = v; if (track) track.volume = state.music ? v : 0; },
+    // Music and sound effects only; character voices keep their own volume.
+    setMusic(on) {
+      state.music = on;
+      if (musicBus) musicBus.gain.value = on ? 0.55 : 0;
+      if (sfxBus) sfxBus.gain.value = on ? 0.7 : 0;
+      if (track) track.volume = on ? state.volume : 0;
+    },
+    suspend() { if (ctx && ctx.state === 'running') ctx.suspend(); if (track && !track.paused) track.pause(); },
+    resume() { if (ctx && ctx.state === 'suspended') ctx.resume(); if (track && track.paused && !track.ended) track.play().catch(() => {}); },
   };
 })();

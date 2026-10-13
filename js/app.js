@@ -138,7 +138,7 @@
     el.addEventListener('click', () => set(!el.classList.contains('on')));
   }
   toggleChip('#tVoice', 'voices', v => { Sound.state.voices = v; if (!v) Sound.stopSpeech(); });
-  toggleChip('#tMusic', 'music', v => { Sound.state.music = v; Sound.setVolume(v ? 0.8 : 0); });
+  toggleChip('#tMusic', 'music', v => { Sound.setMusic(v); });
   toggleChip('#tCaps', 'captions', v => { eng.captions = v; stageEl.classList.toggle('no-caps', !v); });
 
   $('#btnFull').addEventListener('click', () => {

@@ -18,7 +18,7 @@ Press **Play** on the stage, or pick an episode from the guide. Keyboard: `Space
 | Toggle   | What it does |
 |----------|--------------|
 | Voices   | Characters speak using the browser's built-in speech voices (they sound different on each device). Off = captions-only timing. |
-| Music    | Theme song, sing-along music and sound effects (all synthesized with Web Audio, no audio files). |
+| Music    | The recorded theme song, the sing-along music and sound effects. The episode sing-alongs and effects are synthesized with Web Audio. |
 | Captions | Shows every spoken line. Questions, answers and stage directions stay visible either way. |
 
 ## Season 1
@@ -54,6 +54,7 @@ js/audio.js           Web Audio music generator, sound effects, character voices
 js/engine.js          timeline engine: scenes, beats, tweens, actions, captions, pauses, karaoke
 js/episodes.js        all 12 episodes as scene/beat data
 assets/cast/          the original character artwork
+assets/audio/         the recorded theme song ("Gerri's adventure"), played at the start of every episode
 docs/                 the source scripts (.docx and a Markdown copy)
 ```
 
@@ -74,3 +75,10 @@ Episodes live in `js/episodes.js`. A scene sets a background, a cast and props, 
 Actions (`act`): `wave`, `hop`, `bounce`, `dance`, `cheer`, `march`, `lookup`, `up`, `down`, `bend`,
 `stretch`, `jump`, `float`, `balance`, `tumble`, `push`, `wobble`, `sad`, `sleep`, `breathe`, `lift`, `fly`, `tool`.
 The stage is 1600 × 900 with the ground at about `y = 795`.
+
+### Theme song timing
+
+The intro plays `assets/audio/theme-gerris-adventure.mp3`. The karaoke highlights each word in time
+with the recording, using the line timings in `THEME_SONG.timing` (`js/episodes.js`). The timings were
+estimated from the vocals. If the words run ahead of or behind the singing, adjust the `start` and `end`
+seconds there. After the four lines, the outro shows the whole verse as a "Sing along!" card.

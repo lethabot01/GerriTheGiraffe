@@ -85,6 +85,8 @@ main { max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 48px
 .kline span { display: inline-block; color: rgba(255, 247, 230, 0.55); transition: color 0.15s, transform 0.15s; }
 .kline span.sung { color: var(--ink); }
 .kline span.now { color: var(--gold); transform: translateY(-0.4cqw) scale(1.08); }
+.karaoke.block .kline { font-size: 2.3cqw; line-height: 1.3; }
+.kline .bl { display: block; color: var(--ink); }
 .knext { font-size: 1.6cqw; color: var(--muted); min-height: 2cqw; }
 
 /* title card */

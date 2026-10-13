@@ -30,9 +30,18 @@
   const ROCKET = { x: 1220, y: 795 };
 
   /* ---------- theme ---------- */
+  // The recorded theme song ("Gerri's adventure"). Line times are in seconds into the track;
+  // nudge them here if the words run ahead of or behind the singing.
+  const THEME_LINES = ['Look up high, way up high,', "Gerri's dreaming of the sky!", 'With Thola building, step by step,', "We'll reach the stars – we're not done yet!"];
   window.THEME_SONG = {
-    title: "Gerri's Space Dream", bpm: 100, key: 62,
-    parts: [{ label: 'Theme song', lines: ['Look up high, way up high,', "Gerri's dreaming of the sky!", 'With Thola building, step by step,', "We'll reach the stars – we're not done yet!"] }],
+    title: "Gerri's Space Dream", audio: 'assets/audio/theme-gerris-adventure.mp3', duration: 26.9,
+    timing: [
+      { text: THEME_LINES[0], start: 1.25, end: 4.3, label: 'Theme song' },
+      { text: THEME_LINES[1], start: 4.85, end: 7.4 },
+      { text: THEME_LINES[2], start: 7.95, end: 11.1 },
+      { text: THEME_LINES[3], start: 11.55, end: 14.7 },
+      { block: THEME_LINES, start: 15.0, label: 'Sing along!' },
+    ],
   };
 
   const song = (title, v1, ch, v2, o = {}) => ({ title, ...o, parts: [{ label: 'Verse 1', lines: v1 }, { label: 'Chorus', lines: ch }, { label: 'Verse 2', lines: v2 }, { label: 'Chorus', lines: ch }] });

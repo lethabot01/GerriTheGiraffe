@@ -308,7 +308,43 @@
     }
 
     /* ---------- songs ---------- */
+    // A sing-along over a recorded track. song.timing lists when each line is sung (seconds into the track).
+    async singTrack(song, fx) {
+      const tok = this.token;
+      const lines = song.timing.map(tm => {
+        if (tm.block) return { start: tm.start, words: [], wordTimes: [], block: tm.block, label: tm.label };
+        const words = tm.text.split(/\s+/).filter(Boolean);
+        const syl = words.map(w => Math.max(1, Sound.syllables(w)));
+        const total = syl.reduce((a, b) => a + b, 0), span = (tm.end - tm.start) * 0.92;
+        let acc = 0;
+        const wordTimes = syl.map(n => { const t = (acc / total) * span; acc += n; return t; });
+        return { start: tm.start, words, wordTimes, label: tm.label };
+      });
+      const plan = { lines, total: song.duration };
+      this.hideCaption();
+      this.ui.kTitle.textContent = song.title;
+      this.ui.karaoke.hidden = false;
+      this.ui.karaoke.classList.remove('block');
+      this.ui.kLine.innerHTML = ''; this.ui.kNext.textContent = lines[0] && lines[0].words.join(' ');
+      this.ui.kLabel.textContent = 'Get ready to sing!';
+      const track = this.playing ? Sound.playTrack(song.audio) : null;
+      this.songState = { plan, start: this.clock, lineIdx: -1, wordIdx: -1, fx, label: '', track };
+      // Follow the track until it ends; the clock is a safety net if it never loads.
+      while (this.alive(tok)) {
+        const t = this.clock - this.songState.start;
+        if (track && (track.ended || track.error) ) break;
+        if (t > plan.total + (track && track.currentTime > 0 ? 3 : 0.3)) break;
+        await this.wait(0.1);
+      }
+      this.songState = null;
+      Sound.stopTrack();
+      if (!this.alive(tok)) return;
+      this.ui.karaoke.hidden = true;
+      this.ui.karaoke.classList.remove('block');
+    }
+
     async sing(song, fx) {
+      if (song.audio) return this.singTrack(song, fx);
       const tok = this.token;
       const lines = [];
       song.parts.forEach(p => p.lines.forEach((l, i) => lines.push({ text: l, label: i === 0 ? p.label : null })));
@@ -328,7 +364,8 @@
     }
 
     updateKaraoke() {
-      const st = this.songState, t = this.clock - st.start, lines = st.plan.lines;
+      const st = this.songState, lines = st.plan.lines;
+      const t = st.track && st.track.currentTime > 0 && !st.track.error ? st.track.currentTime : this.clock - st.start;
       let li = -1;
       for (let i = 0; i < lines.length; i++) if (t >= lines[i].start) li = i;
       if (li !== st.lineIdx) {
@@ -337,13 +374,15 @@
           const ln = lines[li];
           if (ln.label) st.label = ln.label;
           this.ui.kLabel.textContent = st.label;
-          this.ui.kLine.innerHTML = ln.words.map(w => `<span>${w.replace(/</g, '&lt;')}</span>`).join(' ');
+          this.ui.karaoke.classList.toggle('block', !!ln.block);
+          if (ln.block) this.ui.kLine.innerHTML = ln.block.map(l => `<span class="bl">${l.replace(/</g, '&lt;')}</span>`).join('');
+          else this.ui.kLine.innerHTML = ln.words.map(w => `<span>${w.replace(/</g, '&lt;')}</span>`).join(' ');
           const nx = lines[li + 1];
-          this.ui.kNext.textContent = nx ? (nx.label && nx.label !== st.label ? nx.label + ': ' : '') + nx.words.join(' ') : '';
+          this.ui.kNext.textContent = nx && !nx.block ? (nx.label && nx.label !== st.label ? nx.label + ': ' : '') + nx.words.join(' ') : '';
           if (st.fx) st.fx(li, this, ln);
         }
       }
-      if (li >= 0) {
+      if (li >= 0 && !lines[li].block) {
         const ln = lines[li], lt = t - ln.start;
         let wi = -1; ln.wordTimes.forEach((wt, i) => { if (lt >= wt) wi = i; });
         if (wi !== st.wordIdx) {
@@ -430,7 +469,7 @@
     stop() {
       this.token++;
       this.cancelWaits();
-      Sound.stopSpeech(); Sound.stopSong();
+      Sound.stopSpeech(); Sound.stopSong(); Sound.stopTrack();
       this.songState = null;
     }
 
