@@ -160,10 +160,6 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden && started && eng.playing) eng.pause(); });
 
   /* ---------- cast ---------- */
-  $('#zuriPortrait').innerHTML = `<svg viewBox="0 0 600 600"><defs><linearGradient id="zbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9C8BD0"/><stop offset=".6" stop-color="#F4B474"/><stop offset="1" stop-color="#FFD97A"/></linearGradient></defs>
-    <rect width="600" height="600" fill="url(#zbg)"/><path d="M0,520 Q300,480 600,515 V600 H0Z" fill="#F0BC55"/>
-    <g transform="translate(250,585) scale(0.95)">${CHARACTERS.zuri.draw()}</g></svg>`;
-
   window.GSD = { eng, select, start };
 
   /* ---------- start ---------- */

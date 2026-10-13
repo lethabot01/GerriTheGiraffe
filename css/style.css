@@ -189,6 +189,10 @@ main { max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 48px
 .goal-chip { background: rgba(79, 179, 230, 0.18); color: var(--ink); border-radius: 99px; padding: 1px 10px; font-weight: 700; }
 .ep-song { color: var(--gold); font-size: 0.9rem; font-weight: 700; }
 
+.cast-group { margin: 0 0 18px; border-radius: 22px; overflow: hidden; border: 1px solid var(--line); background: var(--card); }
+.cast-group img { display: block; width: 100%; height: auto; aspect-ratio: 1680 / 944; }
+.cast-group figcaption { padding: 10px 16px 12px; color: var(--muted); font-size: 0.92rem; }
+.cast-group em { color: var(--gold); font-style: normal; font-weight: 800; }
 .cast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
 .cast-card { margin: 0; border-radius: 20px; overflow: hidden; background: var(--card); border: 1px solid var(--line); display: grid; grid-template-rows: auto 1fr; }
 .cast-card img, .cast-svg { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; background: #f4b474; }

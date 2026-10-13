@@ -72,7 +72,7 @@
 
   function moon(phase, x, y, r) {
     const glow = `<circle cx="${x}" cy="${y}" r="${r * 1.6}" fill="#FFF3C4" opacity=".12"/><circle cx="${x}" cy="${y}" r="${r * 1.25}" fill="#FFF3C4" opacity=".15"/>`;
-    return glow + PROPS.moon({ phase, r }).replace('<g>', `<g transform="translate(${x},${y})">`);
+    return glow + PROPS.moon({ phase, r, face: phase === 'full' }).replace('<g>', `<g transform="translate(${x},${y})">`);
   }
 
   function shed(dark) {
@@ -87,6 +87,21 @@
       <rect x="300" y="210" width="100" height="160" fill="${w2}"/>
       <path d="M200,100 l20,30 M230,96 l-4,40 M260,100 l-14,30" stroke="#9aa3ad" stroke-width="7" stroke-linecap="round"/>
       <rect x="180" y="300" width="40" height="50" rx="6" fill="#E24B4B"/><rect x="226" y="314" width="34" height="36" rx="6" fill="#4FB3E6"/><rect x="190" y="292" width="20" height="10" fill="#9aa3ad"/>
+      <path d="M-20,58 q60,34 120,4 q60,34 120,4 q60,34 120,4 q60,34 120,4" stroke="#3a2a1a" stroke-width="2.5" fill="none"/>
+      ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(i => `<circle class="twinkle" style="animation-delay:${(i * 0.25).toFixed(2)}s" cx="${-20 + i * 40 + 20}" cy="${74 - Math.abs(((i % 3) - 1)) * 10}" r="7" fill="#FFE07A"/>`).join('')}
+      <g transform="translate(215,-6)"><path d="M-70,-30 v-26 M70,-30 v-26" stroke="#5a3d29" stroke-width="4"/>
+        <rect x="-150" y="-30" width="300" height="62" rx="6" fill="#E9C48A" stroke="#8E5C3A" stroke-width="5"/>
+        <text y="-6" text-anchor="middle" font-size="21" font-family="'Baloo 2',sans-serif" font-weight="800" fill="#4a2a12">GERRI &amp; THOLA'S</text>
+        <text y="20" text-anchor="middle" font-size="21" font-family="'Baloo 2',sans-serif" font-weight="800" fill="#4a2a12">BIG IDEAS WORKSHOP</text></g>
+      <g transform="translate(170,140)"><rect x="-58" y="-40" width="116" height="84" rx="4" fill="#2F3B33" stroke="#8E5C3A" stroke-width="6"/>
+        <text y="-14" text-anchor="middle" font-size="14" font-family="'Baloo 2',sans-serif" font-weight="700" fill="#F4F1E8">DREAM IT.</text>
+        <text y="4" text-anchor="middle" font-size="14" font-family="'Baloo 2',sans-serif" font-weight="700" fill="#F4F1E8">BUILD IT.</text>
+        <text y="22" text-anchor="middle" font-size="14" font-family="'Baloo 2',sans-serif" font-weight="700" fill="#F4F1E8">BELIEVE IT!</text></g>
+      <g transform="translate(-6,120)"><path d="M0,-40 v14" stroke="#3a2a1a" stroke-width="3"/><rect x="-14" y="-26" width="28" height="38" rx="6" fill="#FFD27A" stroke="#4a3a2a" stroke-width="4"/><circle cy="-6" r="40" fill="#FFD27A" opacity=".18"/></g>
+      <g transform="translate(20,300)"><rect x="0" y="0" width="140" height="70" rx="4" fill="#3E86C4" stroke="#2a5f8f" stroke-width="4"/>
+        <text x="70" y="22" text-anchor="middle" font-size="15" font-family="'Baloo 2',sans-serif" font-weight="800" fill="#fff">RECYCLE</text>
+        <text x="70" y="40" text-anchor="middle" font-size="15" font-family="'Baloo 2',sans-serif" font-weight="800" fill="#fff">REUSE</text>
+        <text x="70" y="58" text-anchor="middle" font-size="15" font-family="'Baloo 2',sans-serif" font-weight="800" fill="#fff">IMAGINE!</text></g>
       </g>`;
   }
 
@@ -163,6 +178,10 @@
       if (who) s += `<g transform="translate(0,${wy + 4}) scale(${w / 520})">${FACES[who] || ''}</g>`;
     }
     if (o.buttons) s += `<rect x="${w * 0.24}" y="${top + 150}" width="22" height="22" rx="3" fill="#4FB3E6"/><rect x="${w * 0.24}" y="${top + 180}" width="22" height="22" rx="3" fill="#F7C93A"/>`;
+    // painted stars (orange, yellow, blue, red), like the rocket in the workshop picture
+    if (c !== 'cardboard') [[-0.24, 0.3, '#F29A2E'], [0.22, 0.42, '#F7C93A'], [-0.18, 0.62, '#4FB3E6'], [0.26, 0.74, '#E2563E'], [-0.26, 0.86, '#F7C93A']].forEach(([fx, fy, col]) => {
+      s += star(w * fx, top + (h - w * 0.55) * fy, w * 0.07, col);
+    });
     // bottle-cap rivets
     for (let i = 0; i < 4; i++) s += `<circle cx="${-w / 2 + 16}" cy="${top + 40 + i * 70}" r="7" fill="#4FB3E6" stroke="#2f6f9a" stroke-width="2"/><circle cx="${w / 2 - 16}" cy="${top + 40 + i * 70}" r="7" fill="#E04848" stroke="#9b2c2c" stroke-width="2"/>`;
     return s + `</g>`;
@@ -324,8 +343,8 @@
     knees: `<rect x="-70" y="-10" width="60" height="120" rx="28" fill="#F7C93A"/><rect x="10" y="-10" width="60" height="120" rx="28" fill="#E4AE24"/>
       <ellipse cx="-40" cy="20" rx="16" ry="12" fill="#EE9433"/><ellipse cx="40" cy="30" rx="14" ry="11" fill="#EE9433"/>`,
   };
-  FACES.gerriHead = `<g transform="rotate(-8)"><rect x="-38" y="-118" width="14" height="60" rx="7" fill="#E4AE24"/><circle cx="-31" cy="-120" r="16" fill="#9A5527"/>
-      <rect x="18" y="-118" width="14" height="60" rx="7" fill="#F7C93A"/><circle cx="25" cy="-120" r="16" fill="#A55E2C"/></g>${FACES.gerri}`;
+  FACES.gerriHead = `<g transform="rotate(-8)"><rect x="-38" y="-118" width="14" height="60" rx="7" fill="#E4AE24"/><circle cx="-31" cy="-120" r="16" fill="#A8652A"/>
+      <rect x="18" y="-118" width="14" height="60" rx="7" fill="#F7C93A"/><circle cx="25" cy="-120" r="16" fill="#AD692C"/></g>${FACES.gerri}`;
 
   window.PROPS = PROPS;
   window.PLANETS = PLANETS;

@@ -53,7 +53,8 @@ js/scenery.js         backgrounds (savannah, workshop, night, space…) and prop
 js/audio.js           Web Audio music generator, sound effects, character voices
 js/engine.js          timeline engine: scenes, beats, tweens, actions, captions, pauses, karaoke
 js/episodes.js        all 12 episodes as scene/beat data
-assets/cast/          the original character artwork
+assets/cast/2d/       the 2D character artwork used on the page (plus the workshop group picture)
+assets/cast/3d-*.webp the first character artwork
 assets/audio/         the recorded theme song ("Gerri's adventure"), played at the start of every episode
 docs/                 the source scripts (.docx and a Markdown copy)
 ```

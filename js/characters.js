@@ -53,7 +53,7 @@
    * Golden coat with orange patches, fuzzy brown ossicones, big pink-lined ears,
    * arched brows, a bunched light-blue scarf with white stars and a fringed tail end. */
   function gerri() {
-    const Y = '#F5C243', Yl = '#FFDA72', Yd = '#DFA52C', S = '#E48A2E', M = '#FFE3A3', H = '#5A3418', MANE = '#A2532A', P = '#F3A49A';
+    const Y = '#F7C93F', Yl = '#FFDF78', Yd = '#E2A92E', S = '#EBA03A', M = '#FFE6A8', H = '#6B3F1F', MANE = '#A85A26', P = '#F3A49A';
     const leg = (x, c, near) => `
       <path d="M${x},-340 C${x - 2},-250 ${x + 2},-170 ${x - 1},-30 L${x + 27},-30 C${x + 26},-170 ${x + 30},-250 ${x + 30},-340 Z" fill="${c}"/>
       <ellipse cx="${x + 14}" cy="-160" rx="17" ry="13" fill="${c}"/>
@@ -81,8 +81,8 @@
       <path d="M118,-380 C122,-470 132,-560 146,-640 L150,-640 C140,-552 134,-472 132,-372 Z" fill="${Yd}" opacity=".5"/>
       ${blob(64, -452, 13, S, 8)}${blob(98, -500, 12, S, 9)}${blob(76, -540, 10, S, 10)}${blob(112, -578, 11, S, 11)}${blob(100, -622, 9, S, 12)}${blob(110, -456, 9, S, 13)}
       <g data-part="head" data-ox="0" data-oy="30" transform="translate(122,-680) scale(1.45)">
-        <g transform="rotate(-16 -26 -50)"><rect x="-33" y="-104" width="13" height="58" rx="6" fill="${Yd}"/><circle cx="-26.5" cy="-106" r="15" fill="#8C4A20"/><circle cx="-31" cy="-111" r="5" fill="#A8622F"/><circle cx="-20" cy="-100" r="4" fill="#7A3E19"/></g>
-        <g transform="rotate(12 14 -54)"><rect x="8" y="-108" width="13" height="60" rx="6" fill="${Y}"/><circle cx="14.5" cy="-110" r="15" fill="#94512A"/><circle cx="10" cy="-115" r="5" fill="#B06B36"/><circle cx="21" cy="-104" r="4" fill="#7A3E19"/></g>
+        <g transform="rotate(-16 -26 -50)"><rect x="-33" y="-104" width="13" height="58" rx="6" fill="${Yd}"/><circle cx="-26.5" cy="-106" r="15" fill="#A8652A"/><circle cx="-31" cy="-111" r="5" fill="#C47E3C"/><circle cx="-20" cy="-100" r="4" fill="#8C4F1E"/></g>
+        <g transform="rotate(12 14 -54)"><rect x="8" y="-108" width="13" height="60" rx="6" fill="${Y}"/><circle cx="14.5" cy="-110" r="15" fill="#AD692C"/><circle cx="10" cy="-115" r="5" fill="#C9833F"/><circle cx="21" cy="-104" r="4" fill="#8C4F1E"/></g>
         <g data-part="ear" data-ox="-40" data-oy="-34"><path d="M-36,-40 C-62,-70 -92,-72 -102,-60 C-92,-40 -64,-26 -40,-26 Z" fill="${Y}"/><path d="M-44,-40 C-62,-58 -82,-60 -90,-56 C-82,-44 -64,-36 -46,-34 Z" fill="${P}"/></g>
         <ellipse cx="0" cy="-14" rx="54" ry="48" fill="${Y}"/>
         <ellipse cx="-12" cy="-40" rx="34" ry="16" fill="${Yl}" opacity=".6"/>
@@ -115,7 +115,7 @@
    * Slim sandy meerkat: dark eye patches, pointed muzzle, orange goggles on her forehead,
    * green tool belt with pouches and tools, a spanner in her hand. */
   function thola() {
-    const B = '#D6A066', Bd = '#B5834B', C = '#F3DDB3', D = '#4A2A12';
+    const B = '#E5B565', Bd = '#C9964A', C = '#FCEBC4', D = '#5A3418';
     return `
     <g data-part="tail" data-ox="-20" data-oy="-40"><path d="M-20,-40 C-62,-34 -88,-14 -108,-6" stroke="${Bd}" stroke-width="13" fill="none" stroke-linecap="round"/>
       <path d="M-100,-9 L-114,-4" stroke="${D}" stroke-width="11" stroke-linecap="round"/></g>
