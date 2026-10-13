@@ -168,6 +168,9 @@ main { max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 48px
 .vp-row select { min-width: 0; width: 100%; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: #1d1647; color: var(--ink); font: inherit; font-size: 0.9rem; }
 .vp-note { margin: 0; color: var(--muted); font-size: 0.88rem; }
 .nat { color: #7fe0a6; font-weight: 800; }
+.kid { color: #ffb3d9; font-weight: 800; }
+.vp-style { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.vp-style-label { font-weight: 800; margin-right: 4px; }
 
 /* now showing */
 .now-showing { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 24px; align-items: start; padding: 22px 4px 8px; }

@@ -104,6 +104,11 @@ saved in that browser. Voices marked *natural* sound the most human; Microsoft E
 ones. With no choice made, the cartoon picks a different natural voice for each character where it can,
 preferring South African English.
 
+The default **Kids (7–9)** style uses children's voices where the browser has them (Microsoft Edge
+has two: Ana and Maisie) and gives each character its own pitch and pace. In browsers without child
+voices it raises the pitch of the most natural voices to sound younger. **Grown-up** switches back to
+adult voices.
+
 ### Recorded voices (recommended)
 Any line can be replaced by a recording, from voice actors or an AI voice tool such as ElevenLabs:
 

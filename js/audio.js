@@ -211,6 +211,21 @@
     all: { pitch: 1.35, rate: 0.95 },
     narrator: { pitch: 1.05, rate: 0.95 },
   };
+  // "Kids (7–9)" style: child voices where the browser has them (Edge: Ana and Maisie),
+  // with a different pitch and pace per character so they stay easy to tell apart.
+  // Values apply to a child voice; on an adult voice the pitch is raised further to sound younger.
+  const KIDS = {
+    gerri: { pitch: 1.0, rate: 0.95, prefer: 'ana' },       // warm, a little dreamy
+    thola: { pitch: 1.08, rate: 1.1, prefer: 'maisie' },    // quick and bright
+    zuri: { pitch: 1.15, rate: 1.02, prefer: 'ana' },       // cheerful
+    kiki: { pitch: 1.25, rate: 1.4, prefer: 'maisie' },     // talks-really-fast
+    bongani: { pitch: 0.82, rate: 0.88, prefer: 'ana' },    // shy, softer and lower
+    all: { pitch: 1.05, rate: 1.0, prefer: 'maisie' },
+    narrator: { pitch: 1.0, rate: 0.95, prefer: 'ana' },
+  };
+  const CHILD = /\b(ana|maisie)\b/i;
+  const isChild = v => CHILD.test(v.name);
+  state.voiceStyle = 'kids';
   let voiceList = [];
   const voiceListeners = [];
   // Voices that sound natural (neural / online voices in Edge, Chrome, Safari).
@@ -239,6 +254,17 @@
     if (!voiceList.length) return null;
     const chosen = state.voiceChoice[who];
     if (chosen) { const v = voiceList.find(x => x.name === chosen); if (v) return v; }
+    if (state.voiceStyle === 'kids') {
+      const kids = voiceList.filter(isChild);
+      if (kids.length) {
+        const want = (KIDS[who] || KIDS.narrator).prefer;
+        return kids.find(v => new RegExp('\\b' + want + '\\b', 'i').test(v.name)) || kids[0];
+      }
+      // No child voices: use young-sounding female voices for everyone (pitch does the rest).
+      const fem = ranked(false), nat = fem.filter(isNatural);
+      const pool = nat.length ? nat : fem.length ? fem : voiceList;
+      return pool[Math.max(0, ORDER.indexOf(who === 'bongani' ? 'all' : who)) % pool.length];
+    }
     if (who === 'bongani') return ranked(true)[0] || ranked(false)[0] || voiceList[0];
     const fem = ranked(false), nat = fem.filter(isNatural);
     const pool = nat.length ? nat : fem.length ? fem : voiceList;
@@ -258,12 +284,20 @@
     const spoken = text.replace(/[*_]/g, '').replace(/-/g, ' ').replace(/\bThola\b/g, 'Tola');
     return new Promise(resolve => {
       const u = new SpeechSynthesisUtterance(spoken);
-      const v = VOICES[who] || VOICES.narrator;
       const voice = pickVoice(who); if (voice) u.voice = voice;
-      // Natural voices sound strange when pushed far from their own pitch, so keep them closer to normal.
-      const soft = voice && isNatural(voice);
-      u.pitch = soft ? 1 + (v.pitch - 1) * 0.35 : v.pitch;
-      u.rate = soft ? 1 + (v.rate - 1) * 0.6 : v.rate;
+      if (state.voiceStyle === 'kids') {
+        const k = KIDS[who] || KIDS.narrator;
+        // A child voice needs only small changes; an adult voice is lifted to sound like a 7–9 year old.
+        const lift = voice && isChild(voice) ? 0 : voice && isNatural(voice) ? 0.28 : 0.4;
+        u.pitch = Math.min(2, k.pitch + lift);
+        u.rate = k.rate;
+      } else {
+        const v = VOICES[who] || VOICES.narrator;
+        // Natural voices sound strange when pushed far from their own pitch, so keep them closer to normal.
+        const soft = voice && isNatural(voice);
+        u.pitch = soft ? 1 + (v.pitch - 1) * 0.35 : v.pitch;
+        u.rate = soft ? 1 + (v.rate - 1) * 0.6 : v.rate;
+      }
       u.volume = state.volume;
       u.onstart = () => onStart && onStart();
       u.onend = resolve; u.onerror = resolve;
@@ -313,7 +347,7 @@
     state, ensure, sfx, planSong, playSong, stopSong, speak, stopSpeech, estimate, syllables, playTrack, stopTrack,
     pauseSpeech() { if ('speechSynthesis' in window) speechSynthesis.pause(); if (clip) clip.pause(); },
     resumeSpeech() { if ('speechSynthesis' in window) speechSynthesis.resume(); if (clip) clip.play().catch(() => {}); },
-    playClip, clipFor, pickVoice, isNatural,
+    playClip, clipFor, pickVoice, isNatural, isChild,
     voices: () => voiceList,
     onVoices(f) { voiceListeners.push(f); if (voiceList.length) f(voiceList); },
     now: () => (ctx ? ctx.currentTime : performance.now() / 1000),

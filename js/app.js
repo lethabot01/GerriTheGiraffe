@@ -160,28 +160,50 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden && started && eng.playing) eng.pause(); });
 
   /* ---------- voice picker ---------- */
-  const VOICE_ROWS = [['gerri', "Hi friends! I'm Gerri! I dream of flying to the stars."], ['thola', "I'm Thola, an inventor! Sharp sharp!"], ['kiki', "I'll-help-I'll-help!"], ['bongani', 'Okay! I can lift it.'], ['zuri', 'Of course!'], ['all', 'Ten, nine, eight… BLAST OFF!']];
+  const VOICE_ROWS = [['gerri', "Hi friends! I'm Gerri! I dream of flying to the stars."], ['thola', "I'm Thola, an inventor! Sharp sharp!"], ['kiki', "I'll-help-I'll-help! Left-a-bit! Right-a-bit!"], ['bongani', "Okay! I'm strong. I can lift it."], ['zuri', 'Of course!'], ['all', 'Ten, nine, eight… BLAST OFF!']];
   Sound.state.voiceChoice = store.get('voiceChoice', {}) || {};
+  Sound.state.voiceStyle = store.get('voiceStyle', 'kids');
+  function syncStyle() {
+    document.querySelectorAll('.vp-style [data-style]').forEach(b => {
+      const on = b.dataset.style === Sound.state.voiceStyle;
+      b.classList.toggle('on', on); b.setAttribute('aria-checked', on);
+    });
+  }
+  document.querySelector('.vp-style').addEventListener('click', e => {
+    const b = e.target.closest('[data-style]'); if (!b) return;
+    Sound.state.voiceStyle = b.dataset.style; store.set('voiceStyle', b.dataset.style);
+    // A new style starts from its own automatic picks.
+    Sound.state.voiceChoice = {}; store.set('voiceChoice', {});
+    syncStyle(); renderVoicePicker(Sound.voices());
+  });
+  syncStyle();
   const panel = $('#voicePanel');
   $('#voiceSettings').addEventListener('click', () => {
     panel.hidden = !panel.hidden;
     $('#voiceSettings').setAttribute('aria-expanded', !panel.hidden);
     $('#voiceSettings').classList.toggle('on', !panel.hidden);
   });
+  // "Microsoft Ana Online (Natural) - English (United States)" → "Ana (English, United States)"
+  const shortName = v => v.name.replace(/^(Microsoft|Google|Apple)\s+/i, '').replace(/\s*Online\s*\(Natural\)/i, '').replace(/\s+-\s+(.*)$/, ' ($1)').replace(/\((English)\s*\((.*)\)\)/, '($1, $2)').replace(/</g, '&lt;');
   function renderVoicePicker(list) {
-    const natural = list.filter(Sound.isNatural).length;
+    const natural = list.filter(Sound.isNatural).length, kids = list.filter(Sound.isChild);
+    const kidsStyle = Sound.state.voiceStyle === 'kids';
     $('#vpStatus').textContent = !list.length
       ? 'This browser has no speech voices, so the cartoon plays with captions only. Recorded voice clips still play.'
-      : natural
-        ? `Pick a voice for each character and press Test to hear it. ${natural} natural-sounding voice${natural > 1 ? 's' : ''} found. Your choices are saved in this browser.`
-        : 'This browser only has robotic-sounding voices. Open the cartoon in Microsoft Edge for natural ones, or add recorded clips.';
+      : kidsStyle && kids.length
+        ? `Using children's voices (${kids.map(v => v.name.replace(/^Microsoft\s+/, '').split(/\s/)[0]).join(' and ')}), each character with their own pitch and pace. Press Test to hear them.`
+        : kidsStyle
+          ? 'This browser has no children\'s voices, so the characters use higher, younger-sounding voices. Open the cartoon in Microsoft Edge for real child voices (Ana and Maisie).'
+          : natural
+            ? `Pick a voice for each character and press Test to hear it. ${natural} natural-sounding voice${natural > 1 ? 's' : ''} found. Your choices are saved in this browser.`
+            : 'This browser only has robotic-sounding voices. Open the cartoon in Microsoft Edge for natural ones, or add recorded clips.';
     $('#vpRows').innerHTML = VOICE_ROWS.map(([k]) => {
       const ch = CHARACTERS[k];
       const auto = Sound.pickVoice(k);
       const choice = Sound.state.voiceChoice[k] || '';
-      const opts = list.map(v => `<option value="${v.name.replace(/"/g, '&quot;')}"${v.name === choice ? ' selected' : ''}>${v.name.replace(/</g, '&lt;')}${Sound.isNatural(v) ? ' · natural' : ''}</option>`).join('');
+      const opts = list.map(v => `<option value="${v.name.replace(/"/g, '&quot;')}"${v.name === choice ? ' selected' : ''}>${shortName(v)}${Sound.isChild(v) ? ' · child' : Sound.isNatural(v) ? ' · natural' : ''}</option>`).join('');
       return `<div class="vp-row" style="--who:${ch ? ch.color : '#7a4a9a'}"><label for="voice-${k}"><i></i>${ch ? ch.name : 'Everyone'}</label>
-        <select id="voice-${k}" data-k="${k}"><option value="">Automatic${auto ? ' (' + auto.name.replace(/</g, '&lt;') + ')' : ''}</option>${opts}</select>
+        <select id="voice-${k}" data-k="${k}"><option value="">Automatic${auto ? ': ' + shortName(auto).replace(/\s*\(.*\)$/, '') : ''}</option>${opts}</select>
         <button class="btn small" data-test="${k}">Test</button></div>`;
     }).join('');
   }
