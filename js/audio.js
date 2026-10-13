@@ -206,7 +206,8 @@
   // Speaks a line with the character's voice. Returns a promise, or null when voices are off/unavailable.
   function speak(text, who, onStart) {
     if (!state.voices || !('speechSynthesis' in window) || !voiceList.length) return null;
-    const spoken = text.replace(/[*_]/g, '').replace(/-/g, ' ');
+    // Spelled "Thola" on screen, but said "Tola".
+    const spoken = text.replace(/[*_]/g, '').replace(/-/g, ' ').replace(/\bThola\b/g, 'Tola');
     return new Promise(resolve => {
       const u = new SpeechSynthesisUtterance(spoken);
       const v = VOICES[who] || VOICES.narrator;
