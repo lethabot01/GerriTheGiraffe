@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gerri's Space Dream</title>
+<meta name="description" content="Gerri's Space Dream – an animated preschool cartoon series. Season 1: 12 episodes with sing-alongs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="css/style.css">
+
+<div class="sky-bg" aria-hidden="true"></div>
+<header class="top">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#2b2160"/><path d="M32 8 l5 12 13 1 -10 8 3 13 -11 -7 -11 7 3 -13 -10 -8 13 -1z" fill="#FFD24A"/></svg>
+    <div>
+      <h1>Gerri's Space Dream</h1>
+      <p class="sub">Season 1 · 12 episodes · ages 3–6</p>
+    </div>
+  </div>
+  <nav class="top-nav" aria-label="Sections">
+    <a href="#episodes">Episodes</a>
+    <a href="#cast">Meet the cast</a>
+  </nav>
+</header>
+
+<main>
+  <section class="player-wrap" aria-label="Episode player">
+    <div class="stage-box" id="stage" tabindex="0" aria-label="Cartoon stage. Space to play or pause, arrow keys to change scene.">
+      <svg class="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Animated scene"></svg>
+
+      <div class="title-card" hidden><div class="ep"></div><div class="name"></div><div class="goal"></div></div>
+
+      <div class="your-turn" hidden aria-live="polite">
+        <svg viewBox="0 0 120 120" class="ring" aria-hidden="true"><circle cx="60" cy="60" r="52" class="ring-bg"/><circle cx="60" cy="60" r="52" class="ring-fg"/></svg>
+        <div class="turn-text"><span class="turn-label">Your turn!</span><span class="num">3</span></div>
+      </div>
+
+      <div class="karaoke" hidden aria-live="polite">
+        <div class="ktop"><span class="ktitle"></span><span class="klabel"></span></div>
+        <div class="kline"></div>
+        <div class="knext"></div>
+      </div>
+
+      <div class="caption" hidden aria-live="polite"><span class="who"></span><span class="line"></span></div>
+
+      <div class="fade"></div>
+
+      <div class="poster" id="poster">
+        <button class="big-play" id="bigPlay" aria-label="Play episode">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M22 14 L52 32 L22 50Z" fill="currentColor"/></svg>
+        </button>
+        <div class="poster-title"><span id="posterEp"></span><strong id="posterName"></strong></div>
+      </div>
+
+      <div class="end-card" hidden>
+        <p class="end-eyebrow">Next time on Gerri's Space Dream</p>
+        <p class="end-next" id="endNext"></p>
+        <div class="end-actions">
+          <button class="btn primary" id="playNext">Play next episode</button>
+          <button class="btn" id="replay">Watch again</button>
+        </div>
+      </div>
+
+      <div class="paused-badge" aria-hidden="true">Paused</div>
+    </div>
+
+    <div class="controls" role="toolbar" aria-label="Player controls">
+      <button class="ctl" id="btnPlay" aria-label="Play"><svg viewBox="0 0 24 24"><path class="i-play" d="M7 4 L20 12 L7 20Z"/><path class="i-pause" d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></button>
+      <button class="ctl" id="btnPrev" aria-label="Previous scene"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5 L9 12 L20 19Z"/></svg></button>
+      <button class="ctl" id="btnNext" aria-label="Next scene"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5 L15 12 L4 19Z"/></svg></button>
+      <div class="scenes" id="sceneBar" aria-label="Scenes"></div>
+      <div class="toggles">
+        <button class="chip on" id="tVoice" aria-pressed="true" title="Character voices (uses your browser's speech)">Voices</button>
+        <button class="chip on" id="tMusic" aria-pressed="true" title="Music and sound effects">Music</button>
+        <button class="chip on" id="tCaps" aria-pressed="true" title="Show what everyone says">Captions</button>
+        <button class="ctl" id="btnFull" aria-label="Full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5v2H6v3zM15 4h5v5h-2V6h-3zM20 15v5h-5v-2h3v-3zM9 20H4v-5h2v3h3z"/></svg></button>
+      </div>
+    </div>
+
+    <div class="now-showing" id="details"></div>
+  </section>
+
+  <section id="episodes" class="section">
+    <div class="section-head">
+      <h2>Season 1 episodes</h2>
+      <p>Each episode opens with the theme song, teaches one idea, pauses so children at home can answer, and ends with a sing-along.</p>
+    </div>
+    <ol class="ep-grid" id="epGrid"></ol>
+  </section>
+
+  <section id="cast" class="section">
+    <div class="section-head">
+      <h2>Meet the cast</h2>
+      <p>Bright, soft cartoon style for preschoolers: rounded shapes, warm colours, gentle lighting.</p>
+    </div>
+    <div class="cast-grid">
+      <article class="cast-card"><img src="assets/cast/gerri.webp" alt="Gerri the Giraffe in her blue star scarf on the savannah" loading="lazy"><div><h3>Gerri the Giraffe</h3><p>Tall, soft yellow giraffe with orange spots, big brown eyes and a light-blue scarf with white stars. Warm, cheerful, curious and a little dreamy. She dreams of flying to space.</p></div></article>
+      <article class="cast-card"><img src="assets/cast/thola.webp" alt="Thola the Meerkat holding a spanner, wearing orange goggles and a green tool belt" loading="lazy"><div><h3>Thola the Meerkat</h3><p>Small sandy-brown inventor with round orange goggles and a green tool belt. Quick, bright and enthusiastic. Says “Eish!” when things go wrong and “Sharp sharp!” when they go right.</p></div></article>
+      <article class="cast-card"><img src="assets/cast/kiki.webp" alt="Kiki the Hornbill on a branch with her big yellow-orange beak" loading="lazy"><div><h3>Kiki the Hornbill</h3><p>Chatty black-and-white bird with a big yellow-orange beak who talks-really-fast. Joins in Episode 9.</p></div></article>
+      <article class="cast-card"><img src="assets/cast/bongani.webp" alt="Bongani the baby elephant holding a bottle cap with his trunk" loading="lazy"><div><h3>Bongani the Baby Elephant</h3><p>Shy, gentle and very strong. Lifts the rocket onto the launch pad. Joins in Episode 9.</p></div></article>
+      <article class="cast-card"><div class="cast-svg" id="zuriPortrait" role="img" aria-label="Zuri the Zebra with a pink bow"></div><div><h3>Zuri the Zebra</h3><p>Cheerful, helpful little zebra with a pink bow. Always ready to say “Of course!” Joins in Episode 9.</p></div></article>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Voices use your browser's built-in speech, so they sound different on each device. Turn <strong>Voices</strong> off to watch with captions only. All songs are original.</p>
+  </footer>
+</main>
+
+<script src="js/characters.js"></script>
+<script src="js/scenery.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/episodes.js"></script>
+<script src="js/app.js"></script>
