@@ -87,6 +87,24 @@ main { max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 48px
 .kline span.now { color: var(--gold); transform: translateY(-0.4cqw) scale(1.08); }
 .karaoke.block .kline { font-size: 2.3cqw; line-height: 1.3; }
 .kline .bl { display: block; color: var(--ink); }
+.karaoke .klabel.flash { animation: kflash 0.9s ease-out; }
+@keyframes kflash { 0% { color: #fff; text-shadow: 0 0 1cqw var(--gold); transform: scale(1.25); } }
+.kball { position: absolute; width: 1.6cqw; height: 1.6cqw; margin: -1.9cqw 0 0 -0.8cqw; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff6c8, var(--gold) 55%, var(--sun)); box-shadow: 0 0 1cqw rgba(255, 210, 74, 0.8); transition: left 0.18s ease-out, top 0.18s ease-out; pointer-events: none; }
+.kball.hop { animation: hop 0.32s ease-out; }
+@keyframes hop { 0% { transform: translateY(0) scale(1, 0.85); } 45% { transform: translateY(-1.2cqw) scale(0.95, 1.05); } 100% { transform: translateY(0); } }
+.kprog { height: 0.35cqw; margin: 0.35cqw auto 0.2cqw; width: 70%; border-radius: 99px; background: rgba(255, 255, 255, 0.14); overflow: hidden; }
+.kprog i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--scarf), var(--gold)); border-radius: inherit; }
+.karaoke.block .kprog { display: none; }
+.knext.soon { color: var(--gold); animation: soon 0.5s ease-in-out infinite alternate; }
+.knext.soon::before { content: '▸ next: '; font-weight: 800; }
+@keyframes soon { to { opacity: 0.55; } }
+.sing-cue { position: absolute; top: 3cqw; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 1cqw; padding: 0.9cqw 2.4cqw 0.9cqw 1.6cqw; border-radius: 99px; background: var(--scarf); color: #0f2a44; font-family: var(--display); font-weight: 800; font-size: 3cqw; line-height: 1.1; white-space: nowrap; box-shadow: 0 0.8cqw 2.4cqw rgba(0, 0, 0, 0.3); animation: pop 0.4s cubic-bezier(.3, 1.6, .5, 1); pointer-events: none; }
+.sing-cue svg { width: 2.8cqw; height: 2.8cqw; flex: none; }
+.sing-cue.count { background: var(--gold); color: #3b2414; font-size: 5.2cqw; padding: 0.6cqw 3cqw 0.6cqw 2cqw; }
+.sing-cue.count svg { width: 4cqw; height: 4cqw; }
+.sing-cue.action { background: #f47eb0; color: #3a0d22; }
+.sing-cue.action .cue-text { animation: nudge 0.9s ease-in-out infinite; display: inline-block; }
+@keyframes nudge { 50% { transform: scale(1.07); } }
 .knext { font-size: 1.6cqw; color: var(--muted); min-height: 2cqw; }
 
 /* title card */
@@ -213,7 +231,7 @@ main { max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 48px
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .twinkle, .drift, .big-play, .anim-spin, .anim-fly-across { animation: none; }
+  .twinkle, .drift, .big-play, .anim-spin, .anim-fly-across, .knext.soon, .sing-cue.action .cue-text { animation: none; }
 }
 
 @media (max-width: 760px) {

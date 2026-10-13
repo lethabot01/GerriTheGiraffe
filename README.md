@@ -76,6 +76,18 @@ Actions (`act`): `wave`, `hop`, `bounce`, `dance`, `cheer`, `march`, `lookup`, `
 `stretch`, `jump`, `float`, `balance`, `tumble`, `push`, `wobble`, `sad`, `sleep`, `breathe`, `lift`, `fly`, `tool`.
 The stage is 1600 × 900 with the ground at about `y = 795`.
 
+### Sing-along cues
+
+Every sing-along counts in on the beat ("3, 2, 1, Sing!"), shows a bouncing star over the word being
+sung, a progress bar for the current line, a "next" hint just before the next line, and a banner at each
+new section ("Chorus · everybody sing!", "Last chorus · sing it LOUD!"). Each song also has action
+prompts tied to its lyrics (for example "Reach up!" or "Crouch down…"). Edit them in the `cues` option
+of each `song(...)` in `js/episodes.js`, keyed by line number (counting from 0, chorus lines included).
+
+The words, cues and the characters' mouths all follow the music's own audio clock, so they stay in time
+after pausing. In the episode sing-alongs, a synthesized singing voice sings each syllable's vowel in
+time with the highlighted words.
+
 ### Theme song timing
 
 The intro plays `assets/audio/theme-gerris-adventure.mp3`. The karaoke highlights each word in time

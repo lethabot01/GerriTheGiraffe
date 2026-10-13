@@ -30,6 +30,7 @@
         caption: root.querySelector('.caption'), who: root.querySelector('.caption .who'), line: root.querySelector('.caption .line'),
         turn: root.querySelector('.your-turn'), turnRing: root.querySelector('.your-turn .ring-fg'), turnNum: root.querySelector('.your-turn .num'),
         karaoke: root.querySelector('.karaoke'), kLabel: root.querySelector('.karaoke .klabel'), kLine: root.querySelector('.karaoke .kline'), kNext: root.querySelector('.karaoke .knext'), kTitle: root.querySelector('.karaoke .ktitle'),
+        cue: root.querySelector('.sing-cue'), kProg: root.querySelector('.karaoke .kprog i'), kBall: root.querySelector('.karaoke .kball'),
         title: root.querySelector('.title-card'), fade: root.querySelector('.fade'), endCard: root.querySelector('.end-card'),
       };
       this.ents = new Map();
@@ -65,7 +66,7 @@
     clear() {
       Object.values(this.layers).forEach(l => (l.innerHTML = ''));
       this.ents.clear(); this.tweens = [];
-      this.hideCaption(); this.ui.turn.hidden = true; this.ui.karaoke.hidden = true; this.ui.title.hidden = true;
+      this.hideCaption(); this.ui.turn.hidden = true; this.ui.karaoke.hidden = true; this.ui.title.hidden = true; this.hideCue();
       this.root.classList.remove('shake');
     }
 
@@ -220,7 +221,8 @@
       const closed = sleeping || e.eyesShut || t < e.blinkUntil;
       if (closed !== e._closed) { this.showPart(e, 'eyesOpen', !closed); this.showPart(e, 'eyesClosed', closed); e._closed = closed; }
       // talking mouth
-      const open = (e.talking && Math.sin(t * 17 + ph) + Math.sin(t * 11) * 0.6 > 0) || e.mouthHold || act === 'cheer';
+      const singing = this.songState && this.songState.mouth && act !== 'sleep';
+      const open = (e.talking && Math.sin(t * 17 + ph) + Math.sin(t * 11) * 0.6 > 0) || singing || e.mouthHold || act === 'cheer';
       if (open !== e._open) { this.showPart(e, 'mouthOpen', open); this.showPart(e, 'mouthClosed', !open); e._open = open; }
     }
 
@@ -310,84 +312,158 @@
     /* ---------- songs ---------- */
     // A sing-along over a recorded track. song.timing lists when each line is sung (seconds into the track).
     async singTrack(song, fx) {
-      const tok = this.token;
       const lines = song.timing.map(tm => {
-        if (tm.block) return { start: tm.start, words: [], wordTimes: [], block: tm.block, label: tm.label };
+        if (tm.block) return { start: tm.start, dur: song.duration - tm.start, words: [], wordTimes: [], block: tm.block, label: tm.label };
         const words = tm.text.split(/\s+/).filter(Boolean);
         const syl = words.map(w => Math.max(1, Sound.syllables(w)));
         const total = syl.reduce((a, b) => a + b, 0), span = (tm.end - tm.start) * 0.92;
         let acc = 0;
         const wordTimes = syl.map(n => { const t = (acc / total) * span; acc += n; return t; });
-        return { start: tm.start, words, wordTimes, label: tm.label };
+        return { start: tm.start, dur: tm.end - tm.start, words, wordTimes, label: tm.label };
       });
-      const plan = { lines, total: song.duration };
-      this.hideCaption();
-      this.ui.kTitle.textContent = song.title;
-      this.ui.karaoke.hidden = false;
-      this.ui.karaoke.classList.remove('block');
-      this.ui.kLine.innerHTML = ''; this.ui.kNext.textContent = lines[0] && lines[0].words.join(' ');
-      this.ui.kLabel.textContent = 'Get ready to sing!';
+      // Mouth movements follow the words: open for most of each word, closed in between.
+      const notes = [];
+      lines.forEach(ln => ln.wordTimes.forEach((wt, i) => {
+        const next = i + 1 < ln.wordTimes.length ? ln.wordTimes[i + 1] : ln.dur * 0.95;
+        notes.push({ t: ln.start + wt, d: (next - wt) * 0.75 });
+      }));
       const track = this.playing ? Sound.playTrack(song.audio) : null;
-      this.songState = { plan, start: this.clock, lineIdx: -1, wordIdx: -1, fx, label: '', track };
-      // Follow the track until it ends; the clock is a safety net if it never loads.
-      while (this.alive(tok)) {
-        const t = this.clock - this.songState.start;
-        if (track && (track.ended || track.error) ) break;
-        if (t > plan.total + (track && track.currentTime > 0 ? 3 : 0.3)) break;
-        await this.wait(0.1);
-      }
-      this.songState = null;
+      await this.runSong(song, { lines, total: song.duration }, fx, { track, notes });
       Sound.stopTrack();
-      if (!this.alive(tok)) return;
-      this.ui.karaoke.hidden = true;
-      this.ui.karaoke.classList.remove('block');
     }
 
     async sing(song, fx) {
       if (song.audio) return this.singTrack(song, fx);
-      const tok = this.token;
       const lines = [];
       song.parts.forEach(p => p.lines.forEach((l, i) => lines.push({ text: l, label: i === 0 ? p.label : null })));
       const plan = Sound.planSong(lines, { bpm: song.bpm, key: song.key });
-      this.hideCaption();
-      this.ui.kTitle.textContent = song.title;
-      this.ui.karaoke.hidden = false;
-      this.ui.kLine.innerHTML = ''; this.ui.kNext.textContent = lines[0] ? lines[0].text : '';
-      this.ui.kLabel.textContent = 'Get ready to sing!';
-      if (this.playing) Sound.playSong(plan);
-      this.songState = { plan, start: this.clock + 0.15, lineIdx: -1, wordIdx: -1, fx, label: '' };
-      await this.wait(plan.total + 0.2);
-      this.songState = null;
+      const notes = [];
+      plan.lines.forEach(ln => (ln.notes || []).forEach(n => notes.push({ t: ln.start + n.t, d: n.d * 0.8 })));
+      const audioT0 = this.playing ? Sound.playSong(plan) : null;
+      await this.runSong(song, plan, fx, { audioT0, notes });
       Sound.stopSong();
-      if (!this.alive(tok)) return;
-      this.ui.karaoke.hidden = true;
     }
 
+    // Shared karaoke loop. Time always comes from the audio itself when it is playing,
+    // so the words, mouths and cues stay locked to the music (also after pausing).
+    async runSong(song, plan, fx, src) {
+      const tok = this.token;
+      this.hideCaption();
+      const u = this.ui;
+      u.kTitle.textContent = song.title;
+      u.karaoke.hidden = false;
+      u.karaoke.classList.remove('block');
+      u.kLine.innerHTML = ''; u.kProg.style.width = '0%'; u.kBall.hidden = true;
+      const first = plan.lines.find(l => !l.gap);
+      u.kNext.textContent = first && first.words ? first.words.join(' ') : '';
+      u.kNext.classList.remove('soon');
+      u.kLabel.textContent = 'Get ready to sing!';
+      this.songState = { plan, song, start: this.clock + (src.audioT0 != null ? 0 : 0.15), lineIdx: -1, wordIdx: -1, fx, label: '', choruses: 0, count: null, cueUntil: 0, ni: 0, mouth: false, ...src };
+      while (this.alive(tok)) {
+        const st = this.songState, t = this.songTime();
+        if (st.track && (st.track.ended || st.track.error)) break;
+        if (t > plan.total + (st.track && st.track.currentTime > 0 ? 3 : 0.2)) break;
+        await this.wait(0.05);
+      }
+      this.songState = null;
+      this.hideCue();
+      if (!this.alive(tok)) return;
+      u.karaoke.hidden = true;
+      u.karaoke.classList.remove('block');
+    }
+
+    songTime() {
+      const st = this.songState;
+      if (st.track && st.track.currentTime > 0 && !st.track.error) return st.track.currentTime;
+      if (st.audioT0 != null && Sound.ctxTime() != null) return Sound.ctxTime() - st.audioT0;
+      return this.clock - st.start;
+    }
+
+    showCue(text, kind, until) {
+      const c = this.ui.cue;
+      if (c.dataset.text !== text || c.hidden) {
+        c.dataset.text = text;
+        c.querySelector('.cue-text').textContent = text;
+        c.className = 'sing-cue ' + (kind || '');
+        c.hidden = false;
+        c.style.animation = 'none'; c.offsetWidth; c.style.animation = '';
+      }
+      if (this.songState) this.songState.cueUntil = until;
+    }
+    hideCue() { this.ui.cue.hidden = true; this.ui.cue.dataset.text = ''; }
+
     updateKaraoke() {
-      const st = this.songState, lines = st.plan.lines;
-      const t = st.track && st.track.currentTime > 0 && !st.track.error ? st.track.currentTime : this.clock - st.start;
+      const st = this.songState, u = this.ui, lines = st.plan.lines, t = this.songTime();
+      // lip sync: mouths open while a note (or word) is being sung
+      while (st.ni < st.notes.length && st.notes[st.ni].t + st.notes[st.ni].d < t) st.ni++;
+      const n = st.notes[st.ni];
+      st.mouth = !!n && t >= n.t && t <= n.t + n.d;
+
       let li = -1;
       for (let i = 0; i < lines.length; i++) if (t >= lines[i].start) li = i;
+
+      // count-in before the first line, on the beat
+      if (li < 0) {
+        const firstStart = lines[0] ? lines[0].start : 0;
+        let label;
+        if (st.plan.beat) { const k = Math.floor(t / st.plan.beat); label = ['3', '2', '1', 'Sing!'][Math.max(0, Math.min(3, k - Math.round(firstStart / st.plan.beat) + 4))]; }
+        else label = t < firstStart - 0.5 ? 'Ready…' : 'Sing!';
+        if (t >= 0 && label !== st.count) { st.count = label; this.showCue(label, 'count', firstStart + 0.4); Sound.sfx(label === 'Sing!' ? 'ding' : 'tick'); }
+      }
+
       if (li !== st.lineIdx) {
         st.lineIdx = li; st.wordIdx = -1;
         if (li >= 0) {
           const ln = lines[li];
-          if (ln.label) st.label = ln.label;
-          this.ui.kLabel.textContent = st.label;
-          this.ui.karaoke.classList.toggle('block', !!ln.block);
-          if (ln.block) this.ui.kLine.innerHTML = ln.block.map(l => `<span class="bl">${l.replace(/</g, '&lt;')}</span>`).join('');
-          else this.ui.kLine.innerHTML = ln.words.map(w => `<span>${w.replace(/</g, '&lt;')}</span>`).join(' ');
+          let sectionCue = null;
+          if (ln.label && ln.label !== st.label) {
+            st.label = ln.label;
+            if (/^Chorus/.test(ln.label)) st.choruses++;
+            const lastChorus = /^Chorus/.test(ln.label) && st.choruses > 1;
+            sectionCue = { 'Verse 1': 'Verse 1 · sing along!', 'Verse 2': 'Verse 2 · keep singing!', 'Sing along!': 'Everybody sing!' }[ln.label]
+              || (/^Chorus/.test(ln.label) ? (lastChorus ? 'Last chorus · sing it LOUD!' : 'Chorus · everybody sing!') : null);
+            u.kLabel.classList.remove('flash'); u.kLabel.offsetWidth; u.kLabel.classList.add('flash');
+          }
+          u.kLabel.textContent = st.label;
+          u.karaoke.classList.toggle('block', !!ln.block);
+          if (ln.block) u.kLine.innerHTML = ln.block.map(l => `<span class="bl">${l.replace(/</g, '&lt;')}</span>`).join('');
+          else u.kLine.innerHTML = ln.words.map(w => `<span>${w.replace(/</g, '&lt;')}</span>`).join(' ');
+          u.kBall.hidden = true;
           const nx = lines[li + 1];
-          this.ui.kNext.textContent = nx && !nx.block ? (nx.label && nx.label !== st.label ? nx.label + ': ' : '') + nx.words.join(' ') : '';
+          u.kNext.textContent = nx && !nx.block ? (nx.label && nx.label !== st.label ? nx.label + ': ' : '') + nx.words.join(' ') : '';
+          u.kNext.classList.remove('soon');
+          // action cue for this line, otherwise a short section banner
+          const action = st.song.cues && st.song.cues[li];
+          const lineEnd = nx ? nx.start : st.plan.total;
+          if (action) this.showCue(action, 'action', lineEnd - 0.1);
+          else if (sectionCue) this.showCue(sectionCue, 'section', ln.start + 2.2);
           if (st.fx) st.fx(li, this, ln);
         }
       }
-      if (li >= 0 && !lines[li].block) {
-        const ln = lines[li], lt = t - ln.start;
-        let wi = -1; ln.wordTimes.forEach((wt, i) => { if (lt >= wt) wi = i; });
-        if (wi !== st.wordIdx) {
-          st.wordIdx = wi;
-          [...this.ui.kLine.children].forEach((sp, i) => sp.className = i < wi ? 'sung' : i === wi ? 'now' : '');
+      if (st.cueUntil && t > st.cueUntil && !this.ui.cue.hidden) this.hideCue();
+
+      if (li >= 0) {
+        const ln = lines[li];
+        const dur = ln.dur || (lines[li + 1] ? lines[li + 1].start - ln.start : st.plan.total - ln.start);
+        u.kProg.style.width = Math.max(0, Math.min(100, ((t - ln.start) / dur) * 100)).toFixed(1) + '%';
+        const nx = lines[li + 1];
+        if (nx && !nx.block && t > nx.start - (st.plan.beat || 0.6)) u.kNext.classList.add('soon');
+        if (!ln.block) {
+          const lt = t - ln.start;
+          let wi = -1; ln.wordTimes.forEach((wt, i) => { if (lt >= wt) wi = i; });
+          if (wi !== st.wordIdx) {
+            st.wordIdx = wi;
+            const spans = [...u.kLine.children];
+            spans.forEach((sp, i) => sp.className = i < wi ? 'sung' : i === wi ? 'now' : '');
+            const cur = spans[wi];
+            if (cur) {
+              const kr = u.karaoke.getBoundingClientRect(), r = cur.getBoundingClientRect();
+              u.kBall.hidden = false;
+              u.kBall.style.left = (r.left - kr.left + r.width / 2).toFixed(1) + 'px';
+              u.kBall.style.top = (r.top - kr.top).toFixed(1) + 'px';
+              u.kBall.classList.remove('hop'); u.kBall.offsetWidth; u.kBall.classList.add('hop');
+            }
+          }
         }
       }
     }
@@ -471,6 +547,7 @@
       this.cancelWaits();
       Sound.stopSpeech(); Sound.stopSong(); Sound.stopTrack();
       this.songState = null;
+      this.hideCue();
     }
 
     pause() { if (!this.playing) return; this.playing = false; Sound.pauseSpeech(); Sound.suspend(); this.root.classList.add('paused'); this.emit('state'); }

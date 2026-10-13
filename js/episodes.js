@@ -54,7 +54,7 @@
     song: song("I'm Reaching for the Stars",
       ['A ladybird is small, small, small,', 'A tree is big and tall, tall, tall,', 'But I want something bigger still –', "I'm reaching for the stars!"],
       ['Reach, reach, reach for the stars,', 'Up past the Moon and up past Mars!', 'Big or small, we try it all –', "I'm reaching for the stars!"],
-      ["My friend Thola's small and smart,", 'She builds with all her clever heart,', 'A rocket big enough for me –', "I'm reaching for the stars!"], { bpm: 104, key: 60 }),
+      ["My friend Thola's small and smart,", 'She builds with all her clever heart,', 'A rocket big enough for me –', "I'm reaching for the stars!"], { bpm: 104, key: 60, cues: { 0: 'Make yourself small!', 1: 'Stretch up tall!', 4: 'Reach for the stars!', 5: 'Point to the Moon!', 8: 'Point to Thola!', 12: 'Reach for the stars!', 13: 'Point to the Moon!' } }),
     yt: { title: 'Gerri the Giraffe Wants to Go to Space! | Big and Small for Kids', description: 'Gerri the Giraffe dreams of flying to the stars, and her inventor friend Thola builds her very first rocket. But is it big enough? Learn big and small with a fun sing-along song!', tags: 'kids cartoon, big and small, preschool learning, giraffe cartoon, space for kids' },
     scenes: [
       intro(),
@@ -127,7 +127,7 @@
     song: song('How Tall Is Gerri?',
       ['Stack a block and stack one more,', 'Measure up from the floor,', 'One, two, three, and up we go –', "How tall is Gerri? Let's find out!"],
       ['Tall, tall, Gerri is tall!', 'Short, short, the door is small!', 'Count the blocks and you will see', 'Just how tall is Gerri!'],
-      ["Five, six, seven, eight blocks high,", "Gerri's head is near the sky,", 'Build the door as tall as she –', "Then she'll fit inside, whee!"], { bpm: 108, key: 62 }),
+      ["Five, six, seven, eight blocks high,", "Gerri's head is near the sky,", 'Build the door as tall as she –', "Then she'll fit inside, whee!"], { bpm: 108, key: 62, cues: { 0: 'Stack your hands!', 2: 'Count on your fingers!', 4: 'Stand up TALL!', 5: 'Crouch down SHORT!', 8: 'Count to eight!', 9: 'Reach up high!', 12: 'Stand up TALL!', 13: 'Crouch down SHORT!' } }),
     yt: { title: "The Door's Too Short! | Gerri the Giraffe Learns Tall and Short", description: 'Thola builds a bigger rocket, but the door is way too short for Gerri! Count blocks and learn to measure tall and short with a catchy sing-along.', tags: 'tall and short, measuring for kids, counting to 8, preschool cartoon, giraffe for kids' },
     scenes: [
       intro(),
@@ -192,7 +192,7 @@
     song: song('Circle, Square and Triangle',
       ['A circle goes round like the big yellow Sun,', 'A square has four sides – count them, everyone!', 'One, two, three, four!'],
       ['Circle, square and triangle,', 'Rectangle too!', 'Shapes can build a rocket ship –', 'Just for me and you!'],
-      ["A triangle's strong with three pointy tips,", 'It holds up the bottom of rocket ships,', 'One, two, three!'], { bpm: 100, key: 65 }),
+      ["A triangle's strong with three pointy tips,", 'It holds up the bottom of rocket ships,', 'One, two, three!'], { bpm: 100, key: 65, cues: { 0: 'Draw a circle in the air!', 1: 'Draw a square!', 2: 'Count to four!', 3: 'Draw a triangle!', 6: 'Make a rocket with your hands!', 7: 'Point to a friend!', 8: 'Make a triangle with your hands!', 10: 'Count to three!', 11: 'Draw a triangle!', 14: 'Make a rocket with your hands!', 15: 'Point to a friend!' } }),
     yt: { title: 'Shapes Make a Spaceship! | Learn Circle, Square and Triangle with Gerri', description: "Gerri's rocket keeps falling over, so Thola uses shapes to make it strong. Learn circles, squares, triangles and rectangles with a fun shape song!", tags: 'shapes for kids, learn shapes, preschool shapes song, kids cartoon, space rocket for kids' },
     scenes: [
       intro(),
@@ -250,7 +250,7 @@
     song: song('Look Up High, Look Down Low',
       ['Look up high, what do you see?', 'Birds and clouds and a tall, tall tree!', "Look down low, what's on the ground?", 'Beetles and flowers all around!'],
       ['Up, up, up! Down, down, down!', 'High in the sky, low on the ground!', 'Up, up, up! Down, down, down!', 'Look all around!'],
-      ['Window high so I can see', 'All the stars that wait for me,', 'Look down low and wave goodbye –', "One day I'll fly into the sky!"], { bpm: 112, key: 64 }),
+      ['Window high so I can see', 'All the stars that wait for me,', 'Look down low and wave goodbye –', "One day I'll fly into the sky!"], { bpm: 112, key: 64, cues: { 0: 'Look UP!', 2: 'Look DOWN!', 4: 'UP! DOWN!', 5: 'Point high, point low!', 6: 'UP! DOWN!', 7: 'Look all around!', 8: 'Look UP!', 10: 'Wave goodbye!', 12: 'UP! DOWN!', 13: 'Point high, point low!', 14: 'UP! DOWN!', 15: 'Look all around!' } }),
     yt: { title: 'The Window Problem! | Up and Down, High and Low with Gerri the Giraffe', description: "Gerri can't see out of her rocket because the window is too low! Play the up-and-down game and learn high and low with Gerri and Thola.", tags: 'up and down for kids, high and low, position words, preschool learning, kids space cartoon' },
     scenes: [
       intro(),
@@ -312,7 +312,7 @@
     song: song('10, 9, 8... Blast Off!',
       ["Ten, nine, eight, we're standing straight,", "Seven, six, five, we can't wait!", 'Four, three, two, get ready, crew –', 'One... BLAST OFF!'],
       ['Count it down, down, down,', 'Then up, up, up we go!', 'Count it down, down, down –', 'Blast off! Whoa!'],
-      ['Helmet on and buckle tight,', "Rocket's ready for the flight!", "Count it slowly, don't you rush –", 'One... BLAST OFF!'], { bpm: 116, key: 60 }),
+      ['Helmet on and buckle tight,', "Rocket's ready for the flight!", "Count it slowly, don't you rush –", 'One... BLAST OFF!'], { bpm: 116, key: 60, cues: { 0: 'Crouch down…', 1: 'Lower…', 2: 'Lower still…', 3: 'JUMP!', 4: 'Point down…', 5: '…then UP!', 7: 'JUMP!', 8: 'Helmet on!', 9: 'Buckle up!', 10: 'Count slowly…', 11: 'JUMP!', 12: 'Point down…', 13: '…then UP!', 15: 'JUMP!' } }),
     yt: { title: 'Countdown to Blast Off! | Count Backwards from 10 with Gerri the Giraffe', description: 'Gerri is so excited to blast off that she forgets to finish counting! Shout along and learn to count backwards from 10 with a rocket countdown song.', tags: 'countdown song for kids, count backwards from 10, blast off, preschool numbers, space for kids' },
     scenes: [
       intro(),
@@ -378,7 +378,7 @@
     song: song('Hello, Mister Moon',
       ['Hello, Mister Moon, so round and bright,', 'You light up the savannah every night,', 'The Sun shines on you, and you shine on me –', 'Hello, Mister Moon!'],
       ['Full moon, half moon,', 'Crescent moon smile,', 'Sometimes you hide', 'For a little while!', 'Hello, Mister Moon!'],
-      ["One day I'll fly up to say hello,", "In Thola's rocket, off we'll go!", "Till then I'll wave from way down here –", 'Hello, Mister Moon!'], { bpm: 88, key: 57 }),
+      ["One day I'll fly up to say hello,", "In Thola's rocket, off we'll go!", "Till then I'll wave from way down here –", 'Hello, Mister Moon!'], { bpm: 88, key: 57, cues: { 0: 'Wave to the Moon!', 4: 'Make a big circle!', 5: 'Make a crescent smile!', 6: 'Hide your eyes…', 7: 'Peekaboo!', 8: 'Wave to the Moon!', 9: 'Fly your arms!', 11: 'Wave from down here!', 13: 'Make a big circle!', 14: 'Make a crescent smile!', 15: 'Hide your eyes…', 16: 'Peekaboo!' } }),
     yt: { title: 'Meet the Moon! | Moon Shapes for Kids with Gerri the Giraffe', description: 'While the rocket glue dries, Thola shows Gerri why the Moon changes shape using a torch and a ball. Learn full, half, crescent and new moon with a gentle song!', tags: 'moon for kids, moon phases, space for preschoolers, kids science, bedtime cartoon' },
     scenes: [
       intro(),
@@ -438,7 +438,7 @@
     song: song('Brave Like Me',
       ['When my tummy feels wobbly and my knees start to shake,', 'I take a big breath, a big breath I take,', "I hold my friend's hand and I say it out loud –", "I can be brave, and I'm proud!"],
       ['Brave like me, brave like you,', 'Feeling scared but trying too!', 'With a friend right by my side,', 'I can be brave!'],
-      ["I've got my blanket, my snack and my song,", 'A picture of home to carry along,', 'Thola is with me, wherever I go –', 'I can be brave, I know!'], { bpm: 92, key: 62 }),
+      ["I've got my blanket, my snack and my song,", 'A picture of home to carry along,', 'Thola is with me, wherever I go –', 'I can be brave, I know!'], { bpm: 92, key: 62, cues: { 0: 'Wobble your knees!', 1: 'Big breath in… and out!', 2: 'Hold a friend’s hand!', 3: 'Stand up proud!', 4: 'Point to you, point to me!', 6: 'Hug a friend!', 7: 'Stand up brave!', 9: 'Hug yourself!', 10: 'Point to a friend!', 12: 'Point to you, point to me!', 14: 'Hug a friend!', 15: 'Stand up brave!' } }),
     yt: { title: 'Gerri Feels Worried | Feelings and Being Brave for Kids', description: 'Gerri feels worried about going so far from home, so Thola helps her name her feelings and pack a Brave Bag. A gentle episode about feelings, deep breaths and courage.', tags: 'feelings for kids, being brave, emotions for preschoolers, calming breathing for kids, social emotional learning' },
     scenes: [
       intro(),
@@ -499,7 +499,7 @@
     song: song('Planet Parade',
       ["Mercury's first, so close to the Sun,", 'Venus is second, a hot, cloudy one,', 'Earth is our home, the third in the line,', 'Mars is fourth, red and shiny!'],
       ['March, march, the Planet Parade,', "Round and round the Sun they've stayed!", 'Eight little planets, big and small –', "Let's say hello to them all!"],
-      ["Jupiter's fifth, the biggest of all,", "Saturn's sixth with its rings like a ball,", 'Uranus is seventh, it spins on its side,', "Neptune's eighth, way out wide!"], { bpm: 112, key: 62 }),
+      ["Jupiter's fifth, the biggest of all,", "Saturn's sixth with its rings like a ball,", 'Uranus is seventh, it spins on its side,', "Neptune's eighth, way out wide!"], { bpm: 112, key: 62, cues: { 0: 'March on the spot!', 4: 'March, march!', 5: 'Spin around!', 6: 'Hold up 8 fingers!', 7: 'Wave hello!', 10: 'Spin on your side!', 12: 'March, march!', 13: 'Spin around!', 14: 'Hold up 8 fingers!', 15: 'Wave hello!' } }),
     yt: { title: 'The Planet Parade! | Learn the 8 Planets with Gerri the Giraffe', description: 'Gerri and Thola make their own planets and line them up from the Sun in a fun Planet Parade. Learn all eight planets in order with a marching sing-along song!', tags: 'planets for kids, solar system song, 8 planets in order, space for kids, preschool science' },
     scenes: [
       intro(),
@@ -558,7 +558,7 @@
     song: song('Many Hands',
       ["When a job's too big for one,", 'Call your friends and get it done!', 'Push together, pull together,', 'Many hands make it lighter!'],
       ['Many hands, many hands,', 'Working together, we can!', 'Big or small, we help it all –', 'With many, many hands!'],
-      ['Zuri pushes, Kiki sings,', 'Bongani lifts the heavy things,', 'Thola steers and Gerri too –', 'Teamwork, me and you!'], { bpm: 108, key: 64 }),
+      ['Zuri pushes, Kiki sings,', 'Bongani lifts the heavy things,', 'Thola steers and Gerri too –', 'Teamwork, me and you!'], { bpm: 108, key: 64, cues: { 0: 'Hold up one finger!', 1: 'Wave your friends over!', 2: 'Push! Pull!', 4: 'Wiggle your hands!', 5: 'Thumbs up!', 7: 'Clap, clap, clap!', 8: 'Push! Sing!', 9: 'Lift something heavy!', 10: 'Steer the rocket!', 11: 'Point to you and me!', 12: 'Wiggle your hands!', 13: 'Thumbs up!', 15: 'Clap, clap, clap!' } }),
     yt: { title: 'Thola Needs Help! | Teamwork and Asking for Help with Gerri the Giraffe', description: "The rocket is too heavy for Thola to move alone, so she learns it's okay to ask friends for help. A fun episode about teamwork, saying please and thank you.", tags: 'teamwork for kids, asking for help, manners for kids, preschool cartoon, friendship song' },
     scenes: [
       intro(),
@@ -626,7 +626,7 @@
     song: song('Astro Exercise',
       ['Reach up high to touch a star,', 'Stretch your arms out, near and far,', 'Bend down low and touch the ground –', 'Astronauts move all around!'],
       ['Astro, astro, exercise!', 'Jump and float and touch the skies!', 'Strong and healthy, here we go –', 'Astro, astro, whoa!'],
-      ["Jump like you're upon the Moon,", 'Float like a big balloon,', 'Stand on one foot, hold it still –', 'Astronauts can do it! Yes, we will!'], { bpm: 116, key: 65 }),
+      ["Jump like you're upon the Moon,", 'Float like a big balloon,', 'Stand on one foot, hold it still –', 'Astronauts can do it! Yes, we will!'], { bpm: 116, key: 65, cues: { 0: 'Reach up!', 1: 'Stretch out wide!', 2: 'Touch the ground!', 3: 'Wiggle all around!', 4: 'Hands up!', 5: 'Jump!', 6: 'Flex your arms!', 7: 'Hands up!', 8: 'Moon jump!', 9: 'Float slowly…', 10: 'Stand on one foot!', 11: 'Hands up!', 12: 'Hands up!', 13: 'Jump!', 14: 'Flex your arms!', 15: 'Hands up!' } }),
     yt: { title: 'Astronaut Training! | Move and Exercise with Gerri the Giraffe', description: 'Gerri and her friends get ready for space with stretching, Moon jumps, floating and balancing. Stand up and train like an astronaut with this move-along episode!', tags: 'exercise for kids, movement song, brain break for kids, preschool PE, astronaut for kids' },
     scenes: [
       intro(),
@@ -696,7 +696,7 @@
     song: song('Try, Try Again',
       ['When things go wrong and I feel sad,', 'I think of all the fixes we had,', 'A door too short, a window too low –', 'We tried again, and so we grow!'],
       ['Try, try, try again,', "Don't give up, my friend!", "If at first it doesn't go,", 'Try, try, try again!'],
-      ['A wobble here, a bonk up there,', 'We fix it all with lots of care,', "With Thola's help and friends so true –", "There's nothing that we can't do!"], { bpm: 100, key: 60 }),
+      ['A wobble here, a bonk up there,', 'We fix it all with lots of care,', "With Thola's help and friends so true –", "There's nothing that we can't do!"], { bpm: 100, key: 60, cues: { 0: 'Make a sad face…', 1: '…now smile!', 2: 'Bend down low!', 3: 'Grow up tall!', 4: 'Thumbs up!', 5: 'Shake your head: no!', 7: 'Thumbs up!', 8: 'Wobble! Bonk!', 10: 'Hold a friend’s hand!', 11: 'Hands up high!', 12: 'Thumbs up!', 13: 'Shake your head: no!', 15: 'Thumbs up!' } }),
     yt: { title: 'One Last Problem! | Never Give Up with Gerri the Giraffe', description: "The night before launch, Gerri's neck won't fit in the rocket and she wants to give up. Thola reminds her of every problem they've solved, and together they try again!", tags: 'never give up, growth mindset for kids, perseverance, preschool cartoon, kids space adventure' },
     scenes: [
       intro(),
@@ -755,7 +755,7 @@
     song: song("I'm Reaching for the Stars (Finale)",
       ['We started small, small, small,', 'Then built a rocket big and tall,', 'With shapes and friends and trying again –', "I'm reaching for the stars!"],
       ['Reach, reach, reach for the stars,', 'Up past the Moon and up past Mars!', 'Big or small, we try it all –', "I'm reaching for the stars!"],
-      ['Now here I am, way up high,', 'Floating in the starry sky,', 'Dreams come true when you believe –', 'I touched the stars!'], { bpm: 104, key: 60 }),
+      ['Now here I am, way up high,', 'Floating in the starry sky,', 'Dreams come true when you believe –', 'I touched the stars!'], { bpm: 104, key: 60, cues: { 0: 'Crouch down small…', 1: 'Stretch up tall!', 3: 'Reach for the stars!', 4: 'Reach, reach, reach!', 5: 'Point to the Moon!', 8: 'Float like an astronaut!', 11: 'Touch the stars!', 12: 'Reach, reach, reach!', 13: 'Point to the Moon!' } }),
     yt: { title: 'BLAST OFF! Gerri the Giraffe Goes to Space! | Season Finale', description: "It's launch day! Help Gerri and Thola check the rocket, shout the countdown and blast off into space to see the Earth, the Moon and the stars. Gerri's dream finally comes true!", tags: 'blast off, space for kids, kids cartoon finale, countdown for kids, dreams come true' },
     scenes: [
       intro(),

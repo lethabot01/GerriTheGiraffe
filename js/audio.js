@@ -100,7 +100,9 @@
     const contourUp = (lineIdx % 2 === 0);
     words.forEach((w, wi) => {
       wordTimes.push(t);
+      const vowels = (w.toLowerCase().replace(/[^a-z]/g, '').match(/[aeiouy]+/g) || ['a']);
       for (let s = 0; s < syl[wi]; s++) {
+        const vowel = ({ y: 'i' })[vowels[Math.min(s, vowels.length - 1)][0]] || vowels[Math.min(s, vowels.length - 1)][0];
         const bar = Math.floor(t / (beat * 4));
         const chord = PROG[(lineIdx * 2 + bar) % 4];
         const pos = idx / Math.max(1, total - 1);
@@ -112,7 +114,7 @@
         if (strong) { let best = chord[0], bd = 99; chord.forEach(c => { [c, c + 12, c - 12].forEach(cc => { const d = Math.abs(cc - n); if (d < bd) { bd = d; best = cc; } }); }); n = best; }
         if (Math.abs(n - prev) > 7) n = prev + Math.sign(n - prev) * 4;
         prev = n;
-        notes.push({ t, n: key + 12 + n, d: step * 0.95 });
+        notes.push({ t, n: key + 12 + n, d: step * 0.95, v: vowel });
         t += step; idx++;
       }
     });
@@ -133,6 +135,32 @@
     });
     plan.total = t + beat * 2;
     return plan;
+  }
+
+  // A simple singing voice: a buzzy source shaped by vowel formants, with gentle vibrato.
+  // Each note sings the vowel of its syllable, so the tune follows the words.
+  const FORMANTS = { a: [850, 1220, 2810], e: [500, 1900, 2600], i: [350, 2400, 3100], o: [520, 920, 2700], u: [380, 950, 2600] };
+  function voiceNote(bus, t, f, d, v) {
+    const src = ctx.createOscillator(); src.type = 'sawtooth'; src.frequency.setValueAtTime(f, t);
+    const lfo = ctx.createOscillator(), depth = ctx.createGain();
+    lfo.frequency.value = 5.4;
+    depth.gain.setValueAtTime(0, t); depth.gain.linearRampToValueAtTime(f * 0.012, t + Math.min(d, 0.35));
+    lfo.connect(depth); depth.connect(src.frequency);
+    const out = ctx.createGain();
+    const end = t + Math.max(0.14, d);
+    out.gain.setValueAtTime(0.0001, t);
+    out.gain.exponentialRampToValueAtTime(0.5, t + 0.035);
+    out.gain.setValueAtTime(0.42, end - 0.06);
+    out.gain.exponentialRampToValueAtTime(0.0001, end + 0.08);
+    (FORMANTS[v] || FORMANTS.a).forEach((fr, i) => {
+      const bp = ctx.createBiquadFilter(), g = ctx.createGain();
+      bp.type = 'bandpass'; bp.frequency.value = fr * 1.12; bp.Q.value = [6, 9, 11][i];
+      g.gain.value = [1, 0.55, 0.25][i];
+      src.connect(bp); bp.connect(g); g.connect(out);
+    });
+    out.connect(bus);
+    src.start(t); lfo.start(t); src.stop(end + 0.1); lfo.stop(end + 0.1);
+    return [src, lfo];
   }
 
   let songNodes = [];
@@ -159,10 +187,11 @@
         noise(musicBus, kt + beat / 2, 0.05, 0.05, 7000, 8000, 1);
       }
     }
-    // melody ("la-la" lead so children sing the words)
+    // melody: a sung voice on every syllable, with a soft bell doubling it
     plan.lines.forEach(ln => (ln.notes || []).forEach(nt => {
-      keep(tone(musicBus, t0 + ln.start + nt.t, midi(nt.n), Math.max(0.15, nt.d), 'triangle', 0.13, 0.02));
-      keep(tone(musicBus, t0 + ln.start + nt.t, midi(nt.n + 12), Math.max(0.12, nt.d * 0.7), 'sine', 0.035, 0.02));
+      const at = t0 + ln.start + nt.t;
+      voiceNote(musicBus, at, midi(nt.n), nt.d, nt.v).forEach(keep);
+      keep(tone(musicBus, at, midi(nt.n + 12), Math.max(0.12, nt.d * 0.6), 'sine', 0.025, 0.02));
     }));
     return t0;
   }
@@ -241,6 +270,7 @@
     pauseSpeech() { if ('speechSynthesis' in window) speechSynthesis.pause(); },
     resumeSpeech() { if ('speechSynthesis' in window) speechSynthesis.resume(); },
     now: () => (ctx ? ctx.currentTime : performance.now() / 1000),
+    ctxTime: () => (ctx ? ctx.currentTime : null),
     hasAudio: () => !!ctx && state.music,
     setVolume(v) { state.volume = v; if (master) master.gain.value = v; if (track) track.volume = state.music ? v : 0; },
     // Music and sound effects only; character voices keep their own volume.
