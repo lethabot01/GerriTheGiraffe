@@ -35,12 +35,14 @@
   const THEME_LINES = ['Look up high, way up high,', "Gerri's dreaming of the sky!", 'With Thola building, step by step,', "We'll reach the stars – we're not done yet!"];
   window.THEME_SONG = {
     title: "Gerri's Space Dream", audio: 'assets/audio/theme-gerris-adventure.mp3', duration: 26.9,
+    // The singing starts 7 seconds in; each line then lasts two bars (about 3.6 s at 136 BPM).
+    countIn: [5.39, 5.85, 6.32],
     timing: [
-      { text: THEME_LINES[0], start: 1.25, end: 4.3, label: 'Theme song' },
-      { text: THEME_LINES[1], start: 4.85, end: 7.4 },
-      { text: THEME_LINES[2], start: 7.95, end: 11.1 },
-      { text: THEME_LINES[3], start: 11.55, end: 14.7 },
-      { block: THEME_LINES, start: 15.0, label: 'Sing along!' },
+      { text: THEME_LINES[0], start: 7.0, end: 10.6, label: 'Theme song' },
+      { text: THEME_LINES[1], start: 10.77, end: 14.2 },
+      { text: THEME_LINES[2], start: 14.35, end: 17.8 },
+      { text: THEME_LINES[3], start: 17.93, end: 21.4 },
+      { block: THEME_LINES, start: 21.6, label: 'Sing along!' },
     ],
   };
 

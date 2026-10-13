@@ -209,12 +209,14 @@
       // parts
       this.setPart(e, 'head', `rotate(${head.toFixed(1)} ${e.parts.head ? e.parts.head[0].dataset.ox : 0} ${e.parts.head ? e.parts.head[0].dataset.oy : 0})`);
       if (e.parts.neck) this.setPart(e, 'neck', neck);
-      if (e.parts.armR) this.setPart(e, 'armR', `rotate(${arm.toFixed(1)} 30 -138)`);
-      if (e.parts.armL) this.setPart(e, 'armL', `rotate(${(act === 'dance' || act === 'cheer' || act === 'float' || act === 'jump' || act === 'balance' ? -arm : 0).toFixed(1)} -30 -138)`);
-      if (e.parts.wing) this.setPart(e, 'wing', `rotate(${wing.toFixed(1)} -10 -96)`);
-      if (e.parts.trunk) this.setPart(e, 'trunk', `rotate(${trunk.toFixed(1)} 46 16)`);
-      if (e.parts.ear) this.setPart(e, 'ear', `rotate(${ear.toFixed(1)} -30 -20)`);
-      if (e.parts.tail) this.setPart(e, 'tail', `rotate(${(Math.sin(t * 3 + ph) * 4).toFixed(1)} ${e.who === 'gerri' ? '-138 -350' : '-26 -30'})`);
+      // Each part turns around its own pivot (data-ox / data-oy in the drawing).
+      const turn = (name, a, ox, oy) => { const p = e.parts[name]; if (p) this.setPart(e, name, `rotate(${a.toFixed(1)} ${p[0].dataset.ox ?? ox} ${p[0].dataset.oy ?? oy})`); };
+      turn('armR', arm, 30, -138);
+      turn('armL', act === 'dance' || act === 'cheer' || act === 'float' || act === 'jump' || act === 'balance' ? -arm : 0, -30, -138);
+      turn('wing', wing, -10, -96);
+      turn('trunk', trunk, 46, 16);
+      turn('ear', ear, -30, -20);
+      turn('tail', Math.sin(t * 3 + ph) * 4, -26, -30);
       // blink
       const sleeping = act === 'sleep';
       if (!sleeping && t > e.nextBlink) { e.blinkUntil = t + 0.13; e.nextBlink = t + 2.2 + Math.random() * 3.5; }
@@ -407,8 +409,9 @@
         const firstStart = lines[0] ? lines[0].start : 0;
         let label;
         if (st.plan.beat) { const k = Math.floor(t / st.plan.beat); label = ['3', '2', '1', 'Sing!'][Math.max(0, Math.min(3, k - Math.round(firstStart / st.plan.beat) + 4))]; }
+        else if (st.song.countIn) { const c = st.song.countIn; label = t < c[0] - 2 ? null : t < c[0] ? 'Ready…' : t < c[1] ? '3' : t < c[2] ? '2' : t < firstStart - 0.45 ? '1' : 'Sing!'; }
         else label = t < firstStart - 0.5 ? 'Ready…' : 'Sing!';
-        if (t >= 0 && label !== st.count) { st.count = label; this.showCue(label, 'count', firstStart + 0.4); Sound.sfx(label === 'Sing!' ? 'ding' : 'tick'); }
+        if (t >= 0 && label && label !== st.count) { st.count = label; this.showCue(label, 'count', firstStart + 0.4); Sound.sfx(label === 'Sing!' ? 'ding' : 'tick'); }
       }
 
       if (li !== st.lineIdx) {
