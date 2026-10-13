@@ -95,3 +95,25 @@ The intro plays `assets/audio/theme-gerris-adventure.mp3`. The karaoke highlight
 with the recording, using the line timings in `THEME_SONG.timing` (`js/episodes.js`). The timings were
 estimated from the vocals. If the words run ahead of or behind the singing, adjust the `start` and `end`
 seconds there. After the four lines, the outro shows the whole verse as a "Sing along!" card.
+
+## Voices
+
+### Choosing voices
+Press **Choose voices** under the player to pick a voice for each character and test it. Choices are
+saved in that browser. Voices marked *natural* sound the most human; Microsoft Edge has the best free
+ones. With no choice made, the cartoon picks a different natural voice for each character where it can,
+preferring South African English.
+
+### Recorded voices (recommended)
+Any line can be replaced by a recording, from voice actors or an AI voice tool such as ElevenLabs:
+
+1. Run `node scripts/export-voice-lines.js`. It writes every spoken line to `docs/voice-lines.md`
+   (grouped by character) and `docs/voice-lines.csv` (one row per clip, with the file name to use).
+2. Record or generate each line and save it under `assets/voices/` with the file name from the list,
+   for example `assets/voices/ep01/ep01-s01-b00.mp3`. `.mp3`, `.m4a`, `.ogg` and `.wav` all work.
+3. Run `node scripts/build-voice-manifest.js` to update `assets/voices/manifest.js`.
+
+A line with a recording plays it (the character's mouth moves while it plays); every other line keeps
+using the chosen speech voice, so you can add recordings a few at a time. Line ids come from the
+episode, scene and beat (`ep01-s01-b00`); answers after a pause end in `-a`. If you change the script in
+`js/episodes.js`, run the export again, because ids can shift.

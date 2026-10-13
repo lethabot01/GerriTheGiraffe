@@ -75,12 +75,22 @@
       <button class="ctl" id="btnNext" aria-label="Next scene"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5 L15 12 L4 19Z"/></svg></button>
       <div class="scenes" id="sceneBar" aria-label="Scenes"></div>
       <div class="toggles">
-        <button class="chip on" id="tVoice" aria-pressed="true" title="Character voices (uses your browser's speech)">Voices</button>
+        <button class="chip on" id="tVoice" aria-pressed="true" title="Character voices">Voices</button>
+        <button class="chip" id="voiceSettings" aria-expanded="false" aria-controls="voicePanel" title="Choose a voice for each character">Choose voices</button>
         <button class="chip on" id="tMusic" aria-pressed="true" title="Music and sound effects">Music</button>
         <button class="chip on" id="tCaps" aria-pressed="true" title="Show what everyone says">Captions</button>
         <button class="ctl" id="btnFull" aria-label="Full screen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5v2H6v3zM15 4h5v5h-2V6h-3zM20 15v5h-5v-2h3v-3zM9 20H4v-5h2v3h3z"/></svg></button>
       </div>
     </div>
+
+    <section class="voice-panel" id="voicePanel" hidden aria-label="Character voices">
+      <div class="vp-head">
+        <h2>Character voices</h2>
+        <p id="vpStatus">Pick a voice for each character and press Test to hear it. Your choices are saved in this browser.</p>
+      </div>
+      <div class="vp-rows" id="vpRows"></div>
+      <p class="vp-note">Voices marked <span class="nat">natural</span> sound the most human. Microsoft Edge has the best free ones (Aria, Jenny, Guy, Sonia, Libby…). Recorded voice clips, once added, always play instead of these voices.</p>
+    </section>
 
     <div class="now-showing" id="details"></div>
   </section>
@@ -121,4 +131,5 @@
 <script src="js/audio.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/episodes.js"></script>
+<script src="assets/voices/manifest.js"></script>
 <script src="js/app.js"></script>

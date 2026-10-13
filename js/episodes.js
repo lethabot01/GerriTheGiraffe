@@ -832,4 +832,7 @@
   });
 
   window.EPISODES = EPISODES;
+  // Every spoken line has a fixed id, used to find its recorded clip:
+  // ep01-s02-b03 is episode 1, scene 2, beat 3 (counting from 0); answers add "-a".
+  window.voiceLineId = (ep, scene, beat) => `ep${String(ep).padStart(2, '0')}-s${String(scene).padStart(2, '0')}-b${String(beat).padStart(2, '0')}`;
 })();

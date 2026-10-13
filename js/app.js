@@ -159,6 +159,48 @@
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden && started && eng.playing) eng.pause(); });
 
+  /* ---------- voice picker ---------- */
+  const VOICE_ROWS = [['gerri', "Hi friends! I'm Gerri! I dream of flying to the stars."], ['thola', "I'm Thola, an inventor! Sharp sharp!"], ['kiki', "I'll-help-I'll-help!"], ['bongani', 'Okay! I can lift it.'], ['zuri', 'Of course!'], ['all', 'Ten, nine, eight… BLAST OFF!']];
+  Sound.state.voiceChoice = store.get('voiceChoice', {}) || {};
+  const panel = $('#voicePanel');
+  $('#voiceSettings').addEventListener('click', () => {
+    panel.hidden = !panel.hidden;
+    $('#voiceSettings').setAttribute('aria-expanded', !panel.hidden);
+    $('#voiceSettings').classList.toggle('on', !panel.hidden);
+  });
+  function renderVoicePicker(list) {
+    const natural = list.filter(Sound.isNatural).length;
+    $('#vpStatus').textContent = !list.length
+      ? 'This browser has no speech voices, so the cartoon plays with captions only. Recorded voice clips still play.'
+      : natural
+        ? `Pick a voice for each character and press Test to hear it. ${natural} natural-sounding voice${natural > 1 ? 's' : ''} found. Your choices are saved in this browser.`
+        : 'This browser only has robotic-sounding voices. Open the cartoon in Microsoft Edge for natural ones, or add recorded clips.';
+    $('#vpRows').innerHTML = VOICE_ROWS.map(([k]) => {
+      const ch = CHARACTERS[k];
+      const auto = Sound.pickVoice(k);
+      const choice = Sound.state.voiceChoice[k] || '';
+      const opts = list.map(v => `<option value="${v.name.replace(/"/g, '&quot;')}"${v.name === choice ? ' selected' : ''}>${v.name.replace(/</g, '&lt;')}${Sound.isNatural(v) ? ' · natural' : ''}</option>`).join('');
+      return `<div class="vp-row" style="--who:${ch ? ch.color : '#7a4a9a'}"><label for="voice-${k}"><i></i>${ch ? ch.name : 'Everyone'}</label>
+        <select id="voice-${k}" data-k="${k}"><option value="">Automatic${auto ? ' (' + auto.name.replace(/</g, '&lt;') + ')' : ''}</option>${opts}</select>
+        <button class="btn small" data-test="${k}">Test</button></div>`;
+    }).join('');
+  }
+  Sound.onVoices(renderVoicePicker);
+  if (!Sound.voices().length) renderVoicePicker([]);
+  $('#vpRows').addEventListener('change', e => {
+    const sel = e.target.closest('select'); if (!sel) return;
+    if (sel.value) Sound.state.voiceChoice[sel.dataset.k] = sel.value; else delete Sound.state.voiceChoice[sel.dataset.k];
+    store.set('voiceChoice', Sound.state.voiceChoice);
+  });
+  $('#vpRows').addEventListener('click', e => {
+    const b = e.target.closest('[data-test]'); if (!b) return;
+    const row = VOICE_ROWS.find(r => r[0] === b.dataset.test);
+    Sound.stopSpeech();
+    const was = Sound.state.voices; Sound.state.voices = true;
+    Sound.speak(row[1], row[0]);
+    Sound.state.voices = was;
+  });
+
   /* ---------- cast ---------- */
   window.GSD = { eng, select, start };
 

@@ -283,15 +283,20 @@
       return [].concat(who).map(k => this.ents.get(k)).filter(Boolean);
     }
 
-    async say(who, text, kind, dir) {
+    async say(who, text, kind, dir, clipId) {
       const tok = this.token;
       const actors = this.speakers(who);
       this.showCaption(who, text, kind, dir);
       actors.forEach(a => (a.talking = true));
       const est = Sound.estimate(text);
-      const sp = this.playing ? Sound.speak(text, who) : null;
-      if (sp) await Promise.race([sp, this.wait(est * 2.5 + 2)]);
-      else await this.wait(est);
+      // A recorded clip wins; if it is missing or fails, fall back to the speech voice.
+      const rec = this.playing ? Sound.playClip(clipId) : null;
+      const played = rec ? await rec : false;
+      if (!played && this.alive(tok)) {
+        const sp = this.playing ? Sound.speak(text, who) : null;
+        if (sp) await Promise.race([sp, this.wait(est * 2.5 + 2)]);
+        else await this.wait(est);
+      }
       actors.forEach(a => (a.talking = false));
       if (!this.alive(tok)) return;
       await this.wait(0.3);
@@ -472,7 +477,7 @@
     }
 
     /* ---------- playback ---------- */
-    async runBeat(b, ep) {
+    async runBeat(b, ep, id) {
       const tok = this.token;
       if (b.cap !== undefined && !b.s) { this.showCaption('narrator', b.cap, 'direction'); }
       this.applyOps(b);
@@ -480,7 +485,7 @@
       else if (b.theme) await this.sing(THEME_SONG, b.fx);
       else if (b.song) await this.sing(ep.song, b.fx);
       else if (b.s) {
-        await this.say(b.s, b.t, b.q ? 'question' : '', b.cap);
+        await this.say(b.s, b.t, b.q ? 'question' : '', b.cap, id);
         if (!this.alive(tok)) return;
         this.applyOps(b.then);
         if (b.q) {
@@ -489,7 +494,7 @@
           if (!this.alive(tok)) return;
           listeners.forEach(a => { a.action = a._prev; });
           this.applyOps(b.aops);
-          if (b.a) await this.say(b.ab || b.s, b.a, 'answer');
+          if (b.a) await this.say(b.ab || b.s, b.a, 'answer', null, id && id + '-a');
         }
       } else if (b.then) this.applyOps(b.then);
       if (!this.alive(tok)) return;
@@ -521,9 +526,9 @@
       (sc.props || []).forEach(p => this.addProp(p.id, p.type, p));
       this.ui.fade.classList.remove('on');
       await this.wait(0.35);
-      for (const b of sc.beats) {
+      for (let bi = 0; bi < sc.beats.length; bi++) {
         if (!this.alive(tok)) return;
-        await this.runBeat(b, ep);
+        await this.runBeat(sc.beats[bi], ep, voiceLineId(ep.n, i, bi));
       }
     }
 

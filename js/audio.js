@@ -212,18 +212,37 @@
     narrator: { pitch: 1.05, rate: 0.95 },
   };
   let voiceList = [];
+  const voiceListeners = [];
+  // Voices that sound natural (neural / online voices in Edge, Chrome, Safari).
+  const NATURAL = /natural|neural|online|enhanced|premium|google/i;
+  const isNatural = v => NATURAL.test(v.name);
   function loadVoices() {
     if (!('speechSynthesis' in window)) return;
-    voiceList = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+    voiceList = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang))
+      .sort((a, b) => (isNatural(b) - isNatural(a)) || a.name.localeCompare(b.name));
+    voiceListeners.forEach(f => f(voiceList));
   }
   if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 
+  // state.voiceChoice maps a character to a chosen voice name ('' = choose automatically).
+  state.voiceChoice = {};
+  // Automatic choice: a different voice for each character where the browser has enough,
+  // preferring natural South African voices, then other natural voices.
+  const MALE = /\b(male|daniel|fred|alex|guy|david|ryan|william|thomas|andrew|brian|christopher|eric|roger|steffan|luke|liam|connor|mitchell|prabhat|wayne|ken|james|tony|davis|jason|mark|george|oliver|rishi|aaron|arthur)\b/i;
+  const ORDER = ['gerri', 'thola', 'zuri', 'kiki', 'all', 'narrator'];
+  function ranked(male) {
+    const pool = voiceList.filter(v => MALE.test(v.name) === male);
+    const score = v => (isNatural(v) ? 2 : 0) + (/en-ZA/i.test(v.lang) ? 1 : 0);
+    return pool.slice().sort((a, b) => score(b) - score(a));
+  }
   function pickVoice(who) {
     if (!voiceList.length) return null;
-    const pref = who === 'bongani' ? /(male|daniel|fred|alex|guy|david)/i : /(female|samantha|karen|tessa|moira|zira|google uk english female|serena|victoria|fiona)/i;
-    const za = voiceList.filter(v => /en-ZA/i.test(v.lang));
-    if (za.length && who !== 'bongani') return za[0];
-    return voiceList.find(v => pref.test(v.name)) || voiceList[0];
+    const chosen = state.voiceChoice[who];
+    if (chosen) { const v = voiceList.find(x => x.name === chosen); if (v) return v; }
+    if (who === 'bongani') return ranked(true)[0] || ranked(false)[0] || voiceList[0];
+    const fem = ranked(false), nat = fem.filter(isNatural);
+    const pool = nat.length ? nat : fem.length ? fem : voiceList;
+    return pool[Math.max(0, ORDER.indexOf(who)) % pool.length];
   }
 
   // Estimated speaking time in seconds (used for captions-only mode and as a safety net).
@@ -240,8 +259,12 @@
     return new Promise(resolve => {
       const u = new SpeechSynthesisUtterance(spoken);
       const v = VOICES[who] || VOICES.narrator;
-      u.pitch = v.pitch; u.rate = v.rate; u.volume = state.volume;
       const voice = pickVoice(who); if (voice) u.voice = voice;
+      // Natural voices sound strange when pushed far from their own pitch, so keep them closer to normal.
+      const soft = voice && isNatural(voice);
+      u.pitch = soft ? 1 + (v.pitch - 1) * 0.35 : v.pitch;
+      u.rate = soft ? 1 + (v.rate - 1) * 0.6 : v.rate;
+      u.volume = state.volume;
       u.onstart = () => onStart && onStart();
       u.onend = resolve; u.onerror = resolve;
       speechSynthesis.speak(u);
@@ -263,12 +286,36 @@
     track.pause(); track.removeAttribute('src'); track.load(); track = null;
   }
 
-  function stopSpeech() { if ('speechSynthesis' in window) speechSynthesis.cancel(); }
+  /* ---------- Recorded voice clips ----------
+   * assets/voices/manifest.js lists the recorded lines (window.VOICE_CLIPS = { id: 'ep01/id.mp3' }).
+   * A line with a clip plays the recording; every other line uses the speech voice. */
+  let clip = null;
+  function clipFor(id) { return id && window.VOICE_CLIPS && window.VOICE_CLIPS[id] ? 'assets/voices/' + window.VOICE_CLIPS[id] : null; }
+  function playClip(id) {
+    const url = clipFor(id);
+    if (!url || !state.voices) return null;
+    stopClip();
+    const a = new Audio(url);
+    clip = a;
+    a.volume = state.volume;
+    return new Promise(resolve => {
+      const done = ok => { if (clip === a) clip = null; resolve(ok); };
+      a.onended = () => done(true);
+      a.onerror = () => done(false);
+      a.play().catch(() => done(false));
+    });
+  }
+  function stopClip() { if (clip) { clip.onended = clip.onerror = null; clip.pause(); clip = null; } }
+
+  function stopSpeech() { if ('speechSynthesis' in window) speechSynthesis.cancel(); stopClip(); }
 
   window.Sound = {
     state, ensure, sfx, planSong, playSong, stopSong, speak, stopSpeech, estimate, syllables, playTrack, stopTrack,
-    pauseSpeech() { if ('speechSynthesis' in window) speechSynthesis.pause(); },
-    resumeSpeech() { if ('speechSynthesis' in window) speechSynthesis.resume(); },
+    pauseSpeech() { if ('speechSynthesis' in window) speechSynthesis.pause(); if (clip) clip.pause(); },
+    resumeSpeech() { if ('speechSynthesis' in window) speechSynthesis.resume(); if (clip) clip.play().catch(() => {}); },
+    playClip, clipFor, pickVoice, isNatural,
+    voices: () => voiceList,
+    onVoices(f) { voiceListeners.push(f); if (voiceList.length) f(voiceList); },
     now: () => (ctx ? ctx.currentTime : performance.now() / 1000),
     ctxTime: () => (ctx ? ctx.currentTime : null),
     hasAudio: () => !!ctx && state.music,
