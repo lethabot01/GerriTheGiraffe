@@ -293,7 +293,9 @@
       const rec = this.playing ? Sound.playClip(clipId) : null;
       const played = rec ? await rec : false;
       if (!played && this.alive(tok)) {
-        const sp = this.playing ? Sound.speak(text, who) : null;
+        // Episodes with a recorded voiceover never mix in a speech voice: unrecorded lines are captions only.
+        const recordedOnly = this.ep && this.ep.voiceover === 'recorded';
+        const sp = this.playing && !recordedOnly ? Sound.speak(text, who) : null;
         if (sp) await Promise.race([sp, this.wait(est * 2.5 + 2)]);
         else await this.wait(est);
       }

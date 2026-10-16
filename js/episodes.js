@@ -47,12 +47,22 @@
   };
 
   const song = (title, v1, ch, v2, o = {}) => ({ title, ...o, parts: [{ label: 'Verse 1', lines: v1 }, { label: 'Chorus', lines: ch }, { label: 'Verse 2', lines: v2 }, { label: 'Chorus', lines: ch }] });
+  // Turns a sing-along into a recorded one: starts[i] is when lyric line i begins (seconds into the track),
+  // ends overrides where a line stops (before an instrumental gap), extra adds cards for instrumental parts.
+  const recorded = (s, { audio, duration, starts, ends = {}, extra = [], countIn }) => {
+    const lines = [];
+    s.parts.forEach(p => p.lines.forEach((l, i) => lines.push({ text: l, label: i === 0 ? p.label : undefined })));
+    s.timing = lines.map((l, i) => ({ ...l, start: starts[i], end: ends[i] ?? (i + 1 < starts.length ? starts[i + 1] - 0.15 : duration) })).concat(extra);
+    return Object.assign(s, { audio, duration, countIn });
+  };
 
   const EPISODES = [];
 
   /* ================= Episode 1 ================= */
   EPISODES.push({
     n: 1, title: 'Gerri Looks Up', goal: 'big and small', runtime: 'about 6 minutes',
+    // Spoken lines use the recorded voiceover in assets/voices/ep01; lines without a recording show as captions only.
+    voiceover: 'recorded',
     song: song("I'm Reaching for the Stars",
       ['A ladybird is small, small, small,', 'A tree is big and tall, tall, tall,', 'But I want something bigger still –', "I'm reaching for the stars!"],
       ['Reach, reach, reach for the stars,', 'Up past the Moon and up past Mars!', 'Big or small, we try it all –', "I'm reaching for the stars!"],
@@ -126,10 +136,22 @@
   const blocks = n => Array.from({ length: n }, (_, i) => ({ id: 'bk' + (i + 1), type: 'block', n: i + 1, x: 250, y: 795 - i * 60, drop: 0.5 }));
   EPISODES.push({
     n: 2, title: "The Door's Too Short!", goal: 'tall and short', runtime: 'about 6 minutes',
-    song: song('How Tall Is Gerri?',
+    song: recorded(song('How Tall Is Gerri?',
       ['Stack a block and stack one more,', 'Measure up from the floor,', 'One, two, three, and up we go –', "How tall is Gerri? Let's find out!"],
       ['Tall, tall, Gerri is tall!', 'Short, short, the door is small!', 'Count the blocks and you will see', 'Just how tall is Gerri!'],
-      ["Five, six, seven, eight blocks high,", "Gerri's head is near the sky,", 'Build the door as tall as she –', "Then she'll fit inside, whee!"], { bpm: 108, key: 62, cues: { 0: 'Stack your hands!', 2: 'Count on your fingers!', 4: 'Stand up TALL!', 5: 'Crouch down SHORT!', 8: 'Count to eight!', 9: 'Reach up high!', 12: 'Stand up TALL!', 13: 'Crouch down SHORT!' } }),
+      ["Five, six, seven, eight blocks high,", "Gerri's head is near the sky,", 'Build the door as tall as she –', "Then she'll fit inside, whee!"], { bpm: 108, key: 62, cues: { 0: 'Stack your hands!', 2: 'Count on your fingers!', 4: 'Stand up TALL!', 5: 'Crouch down SHORT!', 8: 'Count to eight!', 9: 'Reach up high!', 12: 'Stand up TALL!', 13: 'Crouch down SHORT!', 16: 'Dance!', 17: 'Stand up TALL!', 18: 'Crouch down SHORT!', 19: 'Jump and wave!' } }),
+      {
+        // The recorded song: line times found from the vocals (about 100 BPM); a dance break follows the last chorus.
+        audio: 'assets/audio/ep02-how-tall-is-gerri.mp3', duration: 82.3, countIn: [2.04, 2.65, 3.23],
+        starts: [4.35, 7.2, 9.35, 11.7, 14.6, 16.9, 19.4, 21.2, 25.4, 28.6, 31.2, 33.1, 35.9, 38.2, 40.5, 42.9],
+        ends: { 7: 23.6, 15: 45.0 },
+        extra: [
+          { block: ['Dance break!', 'Dance with Gerri and Thola!'], start: 45.3, label: 'Dance break!' },
+          { block: ['Stand up TALL like Gerri!'], start: 54.9 },
+          { block: ['Crouch down SHORT like the door!'], start: 64.5 },
+          { block: ['Jump, wave and say goodbye!'], start: 74.1 },
+        ],
+      }),
     yt: { title: "The Door's Too Short! | Gerri the Giraffe Learns Tall and Short", description: 'Thola builds a bigger rocket, but the door is way too short for Gerri! Count blocks and learn to measure tall and short with a catchy sing-along.', tags: 'tall and short, measuring for kids, counting to 8, preschool cartoon, giraffe for kids' },
     scenes: [
       intro(),

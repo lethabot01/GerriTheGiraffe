@@ -122,3 +122,12 @@ A line with a recording plays it (the character's mouth moves while it plays); e
 using the chosen speech voice, so you can add recordings a few at a time. Line ids come from the
 episode, scene and beat (`ep01-s01-b00`); answers after a pause end in `-a`. If you change the script in
 `js/episodes.js`, run the export again, because ids can shift.
+
+### Recorded so far
+- **Episode 1** plays the recorded voiceover ("Big and Small") cut into one clip per line in
+  `assets/voices/ep01/`. It is marked `voiceover: 'recorded'`, so lines without a clip show as captions
+  only instead of switching to a speech voice. Not yet recorded: "A ladybird is small. A tree is big!",
+  "A pebble is small. A rock is big!" and "Thola is small. Gerri is big!" (`ep01-s04-b01`, `-b03`, `-b05`).
+- **Episode 2** sing-along plays the recorded song `assets/audio/ep02-how-tall-is-gerri.mp3`. Line times
+  are in the `recorded(...)` call for Episode 2 in `js/episodes.js`; the music after the last chorus is a
+  dance break with movement prompts.

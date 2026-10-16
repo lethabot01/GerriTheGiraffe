@@ -18,7 +18,7 @@
     li.innerHTML = `<button class="ep-card" data-i="${i}">
       <span class="ep-num">${ep.n}</span>
       <span class="ep-body"><span class="ep-title">${ep.title}</span>
-      <span class="ep-meta"><span class="goal-chip">${ep.goal}</span><span>${ep.runtime}</span></span>
+      <span class="ep-meta"><span class="goal-chip">${ep.goal}</span>${ep.voiceover || ep.song.audio ? '<span class="goal-chip voiced">Voiced</span>' : ''}<span>${ep.runtime}</span></span>
       <span class="ep-song">♪ ${ep.song.title}</span></span></button>`;
     grid.appendChild(li);
   });
