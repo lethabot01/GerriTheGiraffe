@@ -64,10 +64,23 @@
     n: 1, title: 'Gerri Looks Up', goal: 'big and small', runtime: 'about 6 minutes',
     // Spoken lines use the recorded voiceover in assets/voices/ep01; lines without a recording show as captions only.
     voiceover: 'recorded',
-    song: song("I'm Reaching for the Stars",
+    song: recorded(song("I'm Reaching for the Stars",
       ['A ladybird is small, small, small,', 'A tree is big and tall, tall, tall,', 'But I want something bigger still –', "I'm reaching for the stars!"],
       ['Reach, reach, reach for the stars,', 'Up past the Moon and up past Mars!', 'Big or small, we try it all –', "I'm reaching for the stars!"],
-      ["My friend Thola's small and smart,", 'She builds with all her clever heart,', 'A rocket big enough for me –', "I'm reaching for the stars!"], { bpm: 104, key: 60, cues: { 0: 'Make yourself small!', 1: 'Stretch up tall!', 4: 'Reach for the stars!', 5: 'Point to the Moon!', 8: 'Point to Thola!', 12: 'Reach for the stars!', 13: 'Point to the Moon!' } }),
+      ["My friend Thola's small and smart,", 'She builds with all her clever heart,', 'A rocket big enough for me –', "I'm reaching for the stars!"], { bpm: 104, key: 60, cues: { 0: 'Make yourself small!', 1: 'Stretch up tall!', 4: 'Reach for the stars!', 5: 'Point to the Moon!', 8: 'Point to Thola!', 12: 'Reach for the stars!', 13: 'Dance and reach up high!' } }),
+      {
+        // The recorded song: the last chorus is just "Reach, reach, reach for the stars!", then music to the end.
+        audio: 'assets/audio/ep01-im-reaching-for-the-stars.mp3', duration: 63.8,
+        parts: [
+          { label: 'Verse 1', lines: ['A ladybird is small, small, small,', 'A tree is big and tall, tall, tall,', 'But I want something bigger still –', "I'm reaching for the stars!"] },
+          { label: 'Chorus', lines: ['Reach, reach, reach for the stars,', 'Up past the Moon and up past Mars!', 'Big or small, we try it all –', "I'm reaching for the stars!"] },
+          { label: 'Verse 2', lines: ["My friend Thola's small and smart,", 'She builds with all her clever heart,', 'A rocket big enough for me –', "I'm reaching for the stars!"] },
+          { label: 'Chorus', lines: ['Reach, reach, reach for the stars!'] },
+        ],
+        starts: [0.9, 4.3, 7.8, 10.7, 15.0, 18.3, 21.9, 25.8, 29.3, 32.8, 36.5, 39.6, 43.6],
+        ends: { 3: 12.9, 7: 28.5, 11: 41.6, 12: 46.8 },
+        extra: [{ block: ['Reach, reach, reach for the stars!', 'Up past the Moon and up past Mars!'], start: 47.0, label: 'Dance and reach!' }],
+      }),
     yt: { title: 'Gerri the Giraffe Wants to Go to Space! | Big and Small for Kids', description: 'Gerri the Giraffe dreams of flying to the stars, and her inventor friend Thola builds her very first rocket. But is it big enough? Learn big and small with a fun sing-along song!', tags: 'kids cartoon, big and small, preschool learning, giraffe cartoon, space for kids' },
     scenes: [
       intro(),
@@ -288,10 +301,15 @@
   const R4 = { id: 'rocket', type: 'rocket', ...ROCKET, h: 600, w: 230, door: 'tall', legs: true, nose: true, buttons: true };
   EPISODES.push({
     n: 4, title: 'The Window Problem', goal: 'high and low', runtime: 'about 6 minutes',
-    song: song('Look Up High, Look Down Low',
+    song: recorded(song('Look Up High, Look Down Low',
       ['Look up high, what do you see?', 'Birds and clouds and a tall, tall tree!', "Look down low, what's on the ground?", 'Beetles and flowers all around!'],
       ['Up, up, up! Down, down, down!', 'High in the sky, low on the ground!', 'Up, up, up! Down, down, down!', 'Look all around!'],
       ['Window high so I can see', 'All the stars that wait for me,', 'Look down low and wave goodbye –', "One day I'll fly into the sky!"], { bpm: 112, key: 64, cues: { 0: 'Look UP!', 2: 'Look DOWN!', 4: 'UP! DOWN!', 5: 'Point high, point low!', 6: 'UP! DOWN!', 7: 'Look all around!', 8: 'Look UP!', 10: 'Wave goodbye!', 12: 'UP! DOWN!', 13: 'Point high, point low!', 14: 'UP! DOWN!', 15: 'Look all around!' } }),
+      {
+        audio: 'assets/audio/ep04-look-up-high-look-down-low.mp3', duration: 72.7,
+        starts: [0.5, 4.6, 9.0, 13.0, 17.3, 21.8, 25.9, 30.8, 35.5, 40.0, 44.4, 48.3, 53.6, 58.0, 62.2, 66.9],
+        ends: { 3: 16.9, 7: 34.6, 11: 52.6, 15: 70.6 },
+      }),
     yt: { title: 'The Window Problem! | Up and Down, High and Low with Gerri the Giraffe', description: "Gerri can't see out of her rocket because the window is too low! Play the up-and-down game and learn high and low with Gerri and Thola.", tags: 'up and down for kids, high and low, position words, preschool learning, kids space cartoon' },
     scenes: [
       intro(),
@@ -416,10 +434,15 @@
   const R6 = { ...R4, color: 'silver', win: 'high' };
   EPISODES.push({
     n: 6, title: 'Meet the Moon', goal: 'Moon shapes', runtime: 'about 7 minutes',
-    song: song('Hello, Mister Moon',
+    song: recorded(song('Hello, Mister Moon',
       ['Hello, Mister Moon, so round and bright,', 'You light up the savannah every night,', 'The Sun shines on you, and you shine on me –', 'Hello, Mister Moon!'],
       ['Full moon, half moon,', 'Crescent moon smile,', 'Sometimes you hide', 'For a little while!', 'Hello, Mister Moon!'],
       ["One day I'll fly up to say hello,", "In Thola's rocket, off we'll go!", "Till then I'll wave from way down here –", 'Hello, Mister Moon!'], { bpm: 88, key: 57, cues: { 0: 'Wave to the Moon!', 4: 'Make a big circle!', 5: 'Make a crescent smile!', 6: 'Hide your eyes…', 7: 'Peekaboo!', 8: 'Wave to the Moon!', 9: 'Fly your arms!', 11: 'Wave from down here!', 13: 'Make a big circle!', 14: 'Make a crescent smile!', 15: 'Hide your eyes…', 16: 'Peekaboo!' } }),
+      {
+        audio: 'assets/audio/ep06-hello-mister-moon.mp3', duration: 74.4,
+        starts: [1.0, 5.5, 10.0, 14.8, 18.3, 20.6, 22.9, 25.3, 27.8, 37.0, 41.5, 46.3, 50.5, 54.3, 56.6, 58.9, 61.3, 63.8],
+        ends: { 8: 34.6, 12: 54.1, 17: 70.6 },
+      }),
     yt: { title: 'Meet the Moon! | Moon Shapes for Kids with Gerri the Giraffe', description: 'While the rocket glue dries, Thola shows Gerri why the Moon changes shape using a torch and a ball. Learn full, half, crescent and new moon with a gentle song!', tags: 'moon for kids, moon phases, space for preschoolers, kids science, bedtime cartoon' },
     scenes: [
       intro(),

@@ -124,6 +124,10 @@ episode, scene and beat (`ep01-s01-b00`); answers after a pause end in `-a`. If 
 `js/episodes.js`, run the export again, because ids can shift.
 
 ### Recorded so far
+- **Recorded sing-alongs:** Episodes 1, 2, 3, 4 and 6 play their recorded songs from `assets/audio/`
+  (`ep01-im-reaching-for-the-stars.mp3`, `ep02-how-tall-is-gerri.mp3`, `ep03-circle-square-and-triangle.mp3`,
+  `ep04-look-up-high-look-down-low.mp3`, `ep06-hello-mister-moon.mp3`). Each song's line times are in its
+  `recorded(...)` call in `js/episodes.js`. The other episodes still use the synthesized music.
 - **Episode 1** plays the recorded voiceover ("Big and Small") cut into one clip per line in
   `assets/voices/ep01/`. It is marked `voiceover: 'recorded'`, so lines without a clip show as captions
   only instead of switching to a speech voice. Not yet recorded: "A ladybird is small. A tree is big!",
