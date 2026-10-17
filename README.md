@@ -128,6 +128,12 @@ episode, scene and beat (`ep01-s01-b00`); answers after a pause end in `-a`. If 
   `assets/voices/ep01/`. It is marked `voiceover: 'recorded'`, so lines without a clip show as captions
   only instead of switching to a speech voice. Not yet recorded: "A ladybird is small. A tree is big!",
   "A pebble is small. A rock is big!" and "Thola is small. Gerri is big!" (`ep01-s04-b01`, `-b03`, `-b05`).
+- **Episode 2** dialogue plays the recorded voiceover ("Tall and Short") in `assets/voices/ep02/`, also
+  marked `voiceover: 'recorded'`. Not yet recorded: the answers "Short!" (`ep02-s02-b02-a`) and "Eight!"
+  (`ep02-s03-b11-a`).
+- **Episode 3** sing-along plays the recorded song `assets/audio/ep03-circle-square-and-triangle.mp3`. The
+  recording ends with "Circle, square and triangle, rectangle too!" twice, so its lyric layout is set in
+  the `recorded(...)` call (`parts`).
 - **Episode 2** sing-along plays the recorded song `assets/audio/ep02-how-tall-is-gerri.mp3`. Line times
   are in the `recorded(...)` call for Episode 2 in `js/episodes.js`; the music after the last chorus is a
   dance break with movement prompts.

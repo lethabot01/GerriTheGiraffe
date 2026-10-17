@@ -49,7 +49,8 @@
   const song = (title, v1, ch, v2, o = {}) => ({ title, ...o, parts: [{ label: 'Verse 1', lines: v1 }, { label: 'Chorus', lines: ch }, { label: 'Verse 2', lines: v2 }, { label: 'Chorus', lines: ch }] });
   // Turns a sing-along into a recorded one: starts[i] is when lyric line i begins (seconds into the track),
   // ends overrides where a line stops (before an instrumental gap), extra adds cards for instrumental parts.
-  const recorded = (s, { audio, duration, starts, ends = {}, extra = [], countIn }) => {
+  const recorded = (s, { audio, duration, starts, ends = {}, extra = [], countIn, parts }) => {
+    if (parts) s.parts = parts; // when the recording's sections differ from the script
     const lines = [];
     s.parts.forEach(p => p.lines.forEach((l, i) => lines.push({ text: l, label: i === 0 ? p.label : undefined })));
     s.timing = lines.map((l, i) => ({ ...l, start: starts[i], end: ends[i] ?? (i + 1 < starts.length ? starts[i + 1] - 0.15 : duration) })).concat(extra);
@@ -136,6 +137,8 @@
   const blocks = n => Array.from({ length: n }, (_, i) => ({ id: 'bk' + (i + 1), type: 'block', n: i + 1, x: 250, y: 795 - i * 60, drop: 0.5 }));
   EPISODES.push({
     n: 2, title: "The Door's Too Short!", goal: 'tall and short', runtime: 'about 6 minutes',
+    // Spoken lines use the recorded voiceover ("Tall and Short") in assets/voices/ep02.
+    voiceover: 'recorded',
     song: recorded(song('How Tall Is Gerri?',
       ['Stack a block and stack one more,', 'Measure up from the floor,', 'One, two, three, and up we go –', "How tall is Gerri? Let's find out!"],
       ['Tall, tall, Gerri is tall!', 'Short, short, the door is small!', 'Count the blocks and you will see', 'Just how tall is Gerri!'],
@@ -213,10 +216,24 @@
   const SHAPE_COL = { circle: '#4FB3E6', square: '#F7C93A', triangle: '#E04848', rectangle: '#7DAA41' };
   EPISODES.push({
     n: 3, title: 'Shapes Make a Spaceship', goal: 'shapes', runtime: 'about 7 minutes',
-    song: song('Circle, Square and Triangle',
+    song: recorded(song('Circle, Square and Triangle',
       ['A circle goes round like the big yellow Sun,', 'A square has four sides – count them, everyone!', 'One, two, three, four!'],
       ['Circle, square and triangle,', 'Rectangle too!', 'Shapes can build a rocket ship –', 'Just for me and you!'],
-      ["A triangle's strong with three pointy tips,", 'It holds up the bottom of rocket ships,', 'One, two, three!'], { bpm: 100, key: 65, cues: { 0: 'Draw a circle in the air!', 1: 'Draw a square!', 2: 'Count to four!', 3: 'Draw a triangle!', 6: 'Make a rocket with your hands!', 7: 'Point to a friend!', 8: 'Make a triangle with your hands!', 10: 'Count to three!', 11: 'Draw a triangle!', 14: 'Make a rocket with your hands!', 15: 'Point to a friend!' } }),
+      ["A triangle's strong with three pointy tips,", 'It holds up the bottom of rocket ships,', 'One, two, three!'],
+      { bpm: 100, key: 65, cues: { 0: 'Draw a circle in the air!', 1: 'Draw a square!', 2: 'Count to four!', 3: 'Circle… square… triangle!', 4: 'Make a rectangle with your hands!', 5: 'Make a rocket with your hands!', 6: 'Point to a friend!', 7: 'Make a triangle with your hands!', 8: 'Hold up the rocket!', 9: 'Count to three!', 10: 'Draw the shapes in the air!', 11: 'Make a rectangle!', 12: 'One more time!', 13: 'Hands up high!', 14: 'Dance!' } }),
+      {
+        // The recorded song: singing starts straight away; the last part repeats "Circle, square and triangle, rectangle too!".
+        audio: 'assets/audio/ep03-circle-square-and-triangle.mp3', duration: 47.6,
+        parts: [
+          { label: 'Verse 1', lines: ['A circle goes round like the big yellow Sun,', 'A square has four sides – count them, everyone!', 'One, two, three, four!'] },
+          { label: 'Chorus', lines: ['Circle, square and triangle,', 'Rectangle too!', 'Shapes can build a rocket ship –', 'Just for me and you!'] },
+          { label: 'Verse 2', lines: ["A triangle's strong with three pointy tips,", 'It holds up the bottom of rocket ships,', 'One, two, three!'] },
+          { label: 'Chorus', lines: ['Circle, square and triangle,', 'Rectangle too!', 'Circle, square and triangle,', 'Rectangle too!'] },
+        ],
+        starts: [0.3, 4.0, 7.2, 9.3, 12.2, 15.6, 18.9, 22.0, 25.6, 29.2, 32.8, 36.6, 39.2, 43.2],
+        ends: { 13: 45.6 },
+        extra: [{ block: ['Shapes can build a rocket ship –', 'Just for me and you!'], start: 45.8, label: 'The end!' }],
+      }),
     yt: { title: 'Shapes Make a Spaceship! | Learn Circle, Square and Triangle with Gerri', description: "Gerri's rocket keeps falling over, so Thola uses shapes to make it strong. Learn circles, squares, triangles and rectangles with a fun shape song!", tags: 'shapes for kids, learn shapes, preschool shapes song, kids cartoon, space rocket for kids' },
     scenes: [
       intro(),
